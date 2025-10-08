@@ -1,0 +1,24 @@
+{
+  "name": "Avantar Indica",
+  "short_name": "Avantar",
+  "description": "App de indicações e comissões da Avantar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#170138",
+  "theme_color": "#4A04A5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
