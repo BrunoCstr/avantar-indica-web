@@ -53,7 +53,7 @@ export function RulesComponent({
   };
 
   return (
-    <div className="min-h-screen bg-white-responsive">
+    <div className="min-h-screen bg-white-responsive dark:bg-dark-responsive">
       <div className="px-6 py-12">
         {/* Back Button */}
         <div className="mb-6">
@@ -61,9 +61,9 @@ export function RulesComponent({
         </div>
 
         {/* Main Card */}
-        <div className="bg-[#4A04A5] rounded-3xl p-6 min-h-[600px]">
+        <div className="bg-primary-purple dark:bg-tertiary-purple rounded-3xl p-6 min-h-[600px]">
           {/* Title */}
-          <h1 className="text-2xl font-bold text-cyan-400 text-center mb-8 uppercase tracking-wide">
+          <h1 className="text-2xl font-bold text-blue text-center mb-8 uppercase tracking-wide">
             REGRAS
           </h1>
 
@@ -71,22 +71,22 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("tipos")}
-              className="w-full bg-white rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 {title}
               </h2>
-              <div className="w-8 h-8 bg-[#4A04A5]  border-2 border-[#4A04A5] rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
                 {expandedSections.tipos ? (
-                  <div className="w-3 h-0.5 bg-white"></div>
+                  <div className="w-3 h-0.5 bg-white dark:bg-fifth-purple"></div>
                 ) : (
-                  <Plus className="w-4 h-4 text-white" />
+                  <Plus className="w-4 h-4 text-white dark:text-fifth-purple" />
                 )}
               </div>
             </button>
 
             {expandedSections.tipos && (
-              <div className="bg-[#4A04A5] border-2 rounded-b-2xl p-6 text-white space-y-6">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white space-y-6">
                 {/* Cliente Indicador */}
                 <div>
                   <h3 className="text-lg font-bold mb-3">{titleDescription}</h3>
@@ -119,7 +119,7 @@ export function RulesComponent({
 
                 {/* Sua permissão atual */}
                 <div>
-                  <h3 className="text-lg font-bold text-cyan-400 mb-2">
+                  <h3 className="text-lg font-bold text-blue mb-2">
                     {titleDescription3}
                   </h3>
                   <p className="text-white font-medium">{description3}</p>
@@ -132,22 +132,22 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("recompensas")}
-              className="w-full bg-white rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 RECOMPENSAS
               </h2>
-              <div className="w-8 h-8 bg-[#4A04A5] border-2 border-[#4A04A5] rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
                 {expandedSections.recompensas ? (
-                  <div className="w-3 h-0.5 bg-white"></div>
+                  <div className="w-3 h-0.5 bg-white dark:bg-fifth-purple"></div>
                 ) : (
-                  <Plus className="w-4 h-4 text-white" />
+                  <Plus className="w-4 h-4 text-white dark:text-fifth-purple" />
                 )}
               </div>
             </button>
 
             {expandedSections.recompensas && (
-              <div className="bg-[#4A04A5] border-2 rounded-b-2xl p-6 text-white">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white">
                 <div className="space-y-2 text-sm leading-relaxed">
                   {rewards.split("\n").map((line, index) => (
                     <div key={index} className="flex items-start gap-2">
@@ -164,22 +164,22 @@ export function RulesComponent({
           <div>
             <button
               onClick={() => toggleSection("bonificacao")}
-              className="w-full bg-white rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 BONIFICAÇÃO
               </h2>
-              <div className="w-8 h-8 bg-[#4A04A5] border-2 border-[#4A04A5] rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
                 {expandedSections.bonificacao ? (
-                  <div className="w-3 h-0.5 bg-white"></div>
+                  <div className="w-3 h-0.5 bg-white dark:bg-fifth-purple"></div>
                 ) : (
-                  <Plus className="w-4 h-4 text-white" />
+                  <Plus className="w-4 h-4 text-white dark:text-fifth-purple" />
                 )}
               </div>  
             </button>
 
             {expandedSections.bonificacao && (
-              <div className="bg-[#4A04A5] border-2 rounded-b-2xl p-6 text-white">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white">
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-lg font-bold mb-2">

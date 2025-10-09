@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
 import { Bell, CheckCheck, Clock, DollarSign, UserCheck, AlertCircle } from "lucide-react"
 
 interface Notification {
@@ -120,11 +121,11 @@ export default function NotificacoesPage() {
   const unreadCount = notifications.filter((n) => !n.read).length
 
   return (
-    <div className="min-h-screen lg:pl-64">
+    <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative pb-24 lg:pb-8">
-        <div className="fixed inset-0 lg:left-64 bg-white-responsive" />
+      <PageContainer className="pb-24 lg:pb-8">
+        <PageBackground className="bg-white-responsive" />
 
         <div className="relative z-10 p-6 max-w-4xl mx-auto">
           {/* Header Mobile */}
@@ -203,9 +204,9 @@ export default function NotificacoesPage() {
             </div>
           )}
         </div>
-      </div>
 
-      <BottomNav />
-    </div>
+        <BottomNav />
+      </PageContainer>
+    </>
   )
 }

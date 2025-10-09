@@ -60,16 +60,16 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-[#170138] border-2 border-[#29F3DF] rounded-3xl p-6 mx-auto">
+      <div className="relative w-full max-w-lg bg-fifth-purple dark:bg-purple-black border-2 border-blue rounded-3xl p-6 mx-auto">
         {/* Header */}
         <div className="flex w-full justify-between items-center gap-4 mb-6">
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl bg-[#29F3DF]/20 flex items-center justify-center hover:bg-[#29F3DF]/30 transition-colors"
+            className="w-10 h-10 rounded-xl bg-blue/20 flex items-center justify-center hover:bg-blue/30 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#29F3DF]" />
+            <ArrowLeft className="w-5 h-5 text-blue" />
           </button>
-          <h2 className="text-[#29F3DF] font-bold text-2xl mr-32">Indicar</h2>
+          <h2 className="text-blue font-bold text-2xl mr-32">Indicar</h2>
           <div></div>
         </div>
 
@@ -82,7 +82,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
               placeholder="Nome e sobrenome"
               value={formData.nome}
               onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              className="w-full bg-[#170138] border-2 border-[#29F3DF] text-white placeholder:text-[#29F3DF]/70 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+              className="w-full bg-fifth-purple dark:bg-purple-black border-2 border-blue text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
               required
             />
           </div>
@@ -94,7 +94,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
               placeholder="E-mail"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full bg-[#170138] border-2 border-[#29F3DF] text-white placeholder:text-[#29F3DF]/70 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+              className="w-full bg-fifth-purple dark:bg-purple-black border-2 border-blue text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
               required
             />
           </div>
@@ -106,7 +106,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
               placeholder="Telefone"
               value={formData.telefone}
               onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-              className="w-full bg-[#170138] border-2 border-[#29F3DF] text-white placeholder:text-[#29F3DF]/70 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+              className="w-full bg-fifth-purple dark:bg-purple-black border-2 border-blue text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
               required
             />
           </div>
@@ -116,20 +116,20 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
             <select
               value={formData.produto}
               onChange={(e) => setFormData({ ...formData, produto: e.target.value })}
-              className="w-full bg-[#170138] border-2 border-[#29F3DF] text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 appearance-none"
+              className="w-full bg-fifth-purple dark:bg-purple-black border-2 border-blue text-white px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 appearance-none"
               required
             >
-              <option value="" disabled className="bg-[#170138] text-white">
+              <option value="" disabled className="bg-fifth-purple dark:bg-purple-black text-white">
                 Produto desejado
               </option>
-              <option value="seguro-auto" className="bg-[#170138] text-white">Seguro Auto</option>
-              <option value="seguro-residencial" className="bg-[#170138] text-white">Seguro Residencial</option>
-              <option value="seguro-vida" className="bg-[#170138] text-white">Seguro de Vida</option>
-              <option value="consorcio-auto" className="bg-[#170138] text-white">Consórcio Auto</option>
-              <option value="consorcio-imovel" className="bg-[#170138] text-white">Consórcio Imóvel</option>
-              <option value="plano-saude" className="bg-[#170138] text-white">Plano de Saúde</option>
+              <option value="seguro-auto" className="bg-fifth-purple dark:bg-purple-black text-white">Seguro Auto</option>
+              <option value="seguro-residencial" className="bg-fifth-purple dark:bg-purple-black text-white">Seguro Residencial</option>
+              <option value="seguro-vida" className="bg-fifth-purple dark:bg-purple-black text-white">Seguro de Vida</option>
+              <option value="consorcio-auto" className="bg-fifth-purple dark:bg-purple-black text-white">Consórcio Auto</option>
+              <option value="consorcio-imovel" className="bg-fifth-purple dark:bg-purple-black text-white">Consórcio Imóvel</option>
+              <option value="plano-saude" className="bg-fifth-purple dark:bg-purple-black text-white">Plano de Saúde</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#29F3DF]/70 w-5 h-5 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-blue/70 w-5 h-5 pointer-events-none" />
           </div>
 
           {/* Observações */}
@@ -138,7 +138,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
               placeholder="Observações..."
               value={formData.observacoes}
               onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-              className="w-full bg-[#170138] border-2 border-[#29F3DF] text-white placeholder:text-[#29F3DF]/70 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 min-h-[100px] resize-none"
+              className="w-full bg-fifth-purple dark:bg-purple-black border-2 border-blue text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 min-h-[100px] resize-none"
             />
           </div>
 
@@ -149,9 +149,9 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
               id="consentimento"
               checked={consentimento}
               onChange={(e) => setConsentimento(e.target.checked)}
-              className="mt-1 w-5 h-5 rounded border-2 border-[#29F3DF] bg-[#170138] checked:bg-[#29F3DF] checked:border-[#29F3DF] cursor-pointer"
+              className="mt-1 w-5 h-5 rounded border-2 border-blue bg-fifth-purple dark:bg-purple-black checked:bg-blue checked:border-blue cursor-pointer"
             />
-            <label htmlFor="consentimento" className="text-[#29F3DF]/90 text-sm cursor-pointer leading-relaxed">
+            <label htmlFor="consentimento" className="text-blue/90 text-sm cursor-pointer leading-relaxed">
               Confirmo que obtive consentimento do indicado para enviar seus dados.
             </label>
           </div>
@@ -159,7 +159,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
           {/* Botão ENVIAR */}
           <button
             type="submit"
-            className="w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-4 px-6 rounded-xl transition-colors text-lg mt-4"
+            className="w-full bg-blue hover:bg-blue-light text-fifth-purple dark:text-purple-black font-bold py-4 px-6 rounded-xl transition-colors text-lg mt-4"
           >
             ENVIAR
           </button>

@@ -8,11 +8,13 @@ import {
   sendEmailVerification,
   User,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../lib/firebaseConfig";
 import { db } from "../lib/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { uiStorage } from "@/utils/uiStorage";
 
@@ -27,6 +29,7 @@ interface UserData {
   authToken: any;
   unitName: string;
   unitId: string;
+  isFirstLogin: boolean;
   // Configurações de UI
   uiSettings?: {
     sidebarCollapsed?: boolean;
@@ -39,8 +42,22 @@ interface AuthContextData {
   signIn: (
     email: string,
     password: string,
-    userType: "admin" | "socio"
+    userType:
+      | "cliente_indicador"
+      | "parceiro_indicador"
+      | "sub_indicador"
+      | "admin_franqueadora"
+      | "admin_unidade"
+      | "nao_definido"
   ) => Promise<void | string>;
+  signUp: (
+    fullName: string,
+    email: string,
+    password: string,
+    affiliated_to: string,
+    phone: string,
+    unitName: string
+  ) => Promise<null | string>;
   signOut: () => Promise<void | string>;
   forgotPassword: (email: string) => Promise<null | string>;
   isLoading: boolean;
@@ -133,7 +150,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.error("Erro ao limpar sessão:", error);
         }
 
-        if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/consent") && !window.location.pathname.includes("/policy")) {
+        const currentPath = window.location.pathname;
+        const isPublicRoute = 
+          currentPath === "/" || 
+          currentPath === "/login" || 
+          currentPath === "/cadastro" ||
+          currentPath === "/recuperar-senha";
+        
+        if (!isPublicRoute) {
           window.location.href = "/login";
         }
         return;
@@ -182,7 +206,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   async function signIn(
     email: string,
     password: string,
-    userType: "admin" | "socio"
+    userType:
+      | "cliente_indicador"
+      | "parceiro_indicador"
+      | "sub_indicador"
+      | "admin_franqueadora"
+      | "admin_unidade"
+      | "nao_definido"
   ) {
     try {
       setIsLoadingLogin(true);
@@ -198,7 +228,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       const role = rawRole;
 
-      const allowedRoles = ["admin_franqueadora", "admin_unidade"];
+      const allowedRoles = [
+        "cliente_indicador",
+        "parceiro_indicador",
+        "sub_indicador",
+        "admin_franqueadora",
+        "admin_unidade",
+      ];
       if (!allowedRoles.includes(role)) {
         await signOut(auth);
         setIsLoadingLogin(false);
@@ -211,20 +247,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const isFirstLogin = userData.isFirstLogin;
+        const isFirstLogin = userData.isFirstLogin || true;
         const isEmailVerified = user.emailVerified;
 
         // Se for o primeiro login e o e-mail não estiver verificado, enviar e-mail de verificação
         if (isFirstLogin && !isEmailVerified) {
           try {
             await sendEmailVerification(user, {
-              url:
-                userType === "admin"
-                  ? "https://indica.avantar.com.br/admin"
-                  : "https://indica.avantar.com.br/socio",
+              url: "https://indica.avantar.com.br/login",
               handleCodeInApp: true,
             });
-            
+
             setIsLoadingLogin(false);
           } catch (verificationError: any) {
             console.error(
@@ -237,75 +270,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
 
-      switch (userType) {
-        case "admin":
-          {
-            if (role === "admin_franqueadora") {
-              const idToken = await user.getIdToken();
-              const res = await fetch("/api/sessionLogin", {
-                method: "POST",
-                headers: { "Content-type": "application/json" },
-                body: JSON.stringify({ idToken, role }),
-              });
+      if (userType) {
+        const idToken = await user.getIdToken();
+        const res = await fetch("/api/sessionLogin", {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({ idToken, role }),
+        });
 
-              if (res.ok) {
-                // Aguarda o cookie ser definido antes de redirecionar
-                const cookieSet = await checkCookieSet();
-                if (cookieSet) {
-                  router.replace("/admin");
-                } else {
-                  console.error("Falha ao definir cookie de sessão");
-                  await signOut(auth);
-                  return "Erro ao configurar sessão. Tente novamente.";
-                }
-                setIsLoadingLogin(false);
-              } else {
-                console.error(
-                  "Algo de errado aconteceu ao gravar os Cookies",
-                  res
-                );
-                await signOut(auth);
-                return "Erro ao configurar sessão. Tente novamente.";
-              }
-            } else {
-              await signOut(auth);
-              return "Acesso negado: você não tem permissão para acessar o sistema!";
-            }
-          }
-          break;
-        case "socio": {
-          if (role === "admin_unidade") {
-            const idToken = await user.getIdToken();
-            const res = await fetch("/api/sessionLogin", {
-              method: "POST",
-              headers: { "Content-type": "application/json" },
-              body: JSON.stringify({ idToken, role }),
-            });
-
-            if (res.ok) {
-              // Aguarda o cookie ser definido antes de redirecionar
-              const cookieSet = await checkCookieSet();
-              if (cookieSet) {
-                router.replace("/socio");
-              } else {
-                console.error("Falha ao definir cookie de sessão");
-                await signOut(auth);
-                return "Erro ao configurar sessão. Tente novamente.";
-              }
-              setIsLoadingLogin(false);
-            } else {
-              console.error(
-                "Algo de errado aconteceu ao gravar os Cookies",
-                res
-              );
-              await signOut(auth);
-              return "Erro ao configurar sessão. Tente novamente.";
-            }
+        if (res.ok) {
+          // Aguarda o cookie ser definido antes de redirecionar
+          const cookieSet = await checkCookieSet();
+          if (cookieSet) {
+            router.replace("/dashboard");
           } else {
+            console.error("Falha ao definir cookie de sessão");
             await signOut(auth);
-            return "Acesso negado: você não tem permissão para acessar o sistema!";
+            return "Erro ao configurar sessão. Tente novamente.";
           }
+          setIsLoadingLogin(false);
+        } else {
+          console.error("Algo de errado aconteceu ao gravar os Cookies", res);
+          await signOut(auth);
+          return "Erro ao configurar sessão. Tente novamente.";
         }
+      } else {
+        await signOut(auth);
+        return "Acesso negado: você não tem permissão para acessar o sistema!";
       }
 
       setIsLoadingLogin(false);
@@ -404,6 +395,94 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  async function signUp(
+    fullName: string,
+    email: string,
+    password: string,
+    affiliated_to: string,
+    phone: string,
+    unitName: string
+  ) {
+    try {
+      // Validação adicional de senha forte
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        throw new Error(
+          'A senha deve conter:\n• Pelo menos 8 caracteres\n• Pelo menos uma letra maiúscula\n• Pelo menos uma letra minúscula\n• Pelo menos um número\n• Pelo menos um caractere especial (!@#$%^&*(),.?":{}|<>)\n• Não pode ser uma senha comum'
+        );
+      }
+
+      // Criar usuário no Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Atualizar o perfil do usuário com o nome completo
+      await updateProfile(user, {
+        displayName: fullName,
+      });
+
+      // Criar documento do usuário no Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: fullName,
+        email: email,
+        phone: phone || "",
+        affiliated_to: affiliated_to,
+        unitName: unitName,
+        unitId: affiliated_to,
+        rule: "cliente_indicador",
+        profilePicture: "",
+        createdAt: new Date().toISOString(),
+        isFirstLogin: true,
+        uiSettings: {
+          sidebarCollapsed: false,
+          theme: "light",
+        },
+      });
+
+      // Enviar e-mail de verificação
+      await sendEmailVerification(user, {
+        url: "https://indica.avantar.com.br/login",
+        handleCodeInApp: true,
+      });
+
+      // Fazer logout após o cadastro
+      await signOut(auth);
+
+      return null; // Sucesso
+    } catch (err: any) {
+      // Limpar usuário criado se houver erro no processo
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await signOut(auth);
+      }
+
+      // Tratar erros do Firebase
+      if (err.message && err.message.includes("A senha deve conter:")) {
+        throw err; // Lança o erro de validação de senha
+      }
+
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          return "auth/email-already-in-use";
+        case "auth/invalid-email":
+          return "auth/invalid-email";
+        case "auth/weak-password":
+          return "auth/weak-password";
+        case "auth/operation-not-allowed":
+          return "auth/operation-not-allowed";
+        case "auth/network-request-failed":
+          return "auth/network-request-failed";
+        default:
+          console.error(err);
+          return "auth/unknown-error";
+      }
+    }
+  }
+
   async function updateUISettings(settings: Partial<UserData["uiSettings"]>) {
     if (!userData?.uid) return;
 
@@ -438,6 +517,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       value={{
         userAuthenticated,
         signIn,
+        signUp,
         signOut: handleSignOut,
         isLoading,
         userData,

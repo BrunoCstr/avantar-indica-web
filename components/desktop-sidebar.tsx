@@ -22,23 +22,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/Auth";
+import { useUISettings } from "@/hooks/useUISettings";
 import { Wallet, ClipboardList, Bell, User } from "lucide-react";
 
 interface SidebarProps {
-  userType: "parceiro_indicador" | "cliente_indicador";
-  isCollapsed?: boolean;
-  onToggle?: () => void;
+  userType?: "parceiro_indicador" | "cliente_indicador";
 }
 
-export function Sidebar({
-  userType,
-  isCollapsed = false,
-  onToggle,
+export function DesktopSidebar({
+  userType = "parceiro_indicador",
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const { signOut } = useAuth();
+  const { sidebarCollapsed, updateSidebarCollapsed } = useUISettings();
 
   useEffect(() => {
     setIsMounted(true);
@@ -93,12 +91,10 @@ export function Sidebar({
             <div className="p-4 flex items-center justify-between border-b border-white/10">
               <Link href="/" className="flex items-center gap-2">
                 <div className="flex items-center justify-center">
-                  <Image
-                    src="/images/logo-sidebar.svg"
+                  <img
+                    src="/logo-sidebar.svg"
                     alt="Avantar Logo"
-                    width={42}
-                    height={42}
-                    className="object-contain"
+                    className="h-12 w-12"
                   />
                 </div>
                 <span className="font-bold text-xl text-white">
@@ -149,32 +145,32 @@ export function Sidebar({
       <aside
         className={cn(
           "fixed hidden md:flex h-full flex-col bg-gradient-to-b from-avantar-primary to-avantar-secondary text-white border-r border-white/10 shadow-sm transition-all duration-300 z-40 overflow-hidden",
-          isCollapsed ? "w-[80px]" : "w-[280px]"
+          sidebarCollapsed ? "w-[80px]" : "w-[280px]"
         )}
       >
         <div className={cn(
           "p-4 flex items-center border-b border-white/10 overflow-hidden",
-          isCollapsed ? "justify-center relative" : "justify-between"
+          sidebarCollapsed ? "justify-center relative" : "justify-between"
         )}>
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link href="/" className={cn(
                   "flex items-center min-w-0",
-                  isCollapsed ? "justify-center" : "gap-2"
+                  sidebarCollapsed ? "justify-center" : "gap-2"
                 )}>
                   <div className="flex items-center justify-center">
                     <Image
-                      src="/images/logo-sidebar.svg"
+                      src="logo-sidebar.svg"
                       alt="Avantar Logo"
-                      width={isCollapsed ? 32 : 42}
-                      height={isCollapsed ? 32 : 42}
+                      width={sidebarCollapsed ? 32 : 42}
+                      height={sidebarCollapsed ? 32 : 42}
                       className="object-contain"
                     />
                   </div>
                   <div className={cn(
                     "transition-all duration-300 ease-in-out max-w-[200px]",
-                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                    sidebarCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
                   )}>
                     <span className="font-bold pl-2 text-xl text-white whitespace-nowrap block overflow-hidden text-ellipsis">
                       Avantar Indica
@@ -182,17 +178,17 @@ export function Sidebar({
                   </div>
                 </Link>
               </TooltipTrigger>
-              {isCollapsed && (
+              {sidebarCollapsed && (
                 <TooltipContent side="right">Avantar Indica</TooltipContent>
               )}
             </Tooltip>
           </TooltipProvider>
-          {!isCollapsed ? (
+          {!sidebarCollapsed ? (
             <Button
               variant="ghost"
               size="icon"
               className="rounded-full h-7 w-7 hover:bg-white/10 text-white"
-              onClick={onToggle}
+              onClick={() => updateSidebarCollapsed(true)}
             >
               <Menu className="h-2 w-2" color="white" />
               <span className="sr-only">Toggle sidebar</span>
@@ -205,7 +201,7 @@ export function Sidebar({
                     variant="ghost"
                     size="icon"
                     className="rounded-full h-6 w-6 hover:bg-white/10 text-white absolute -top-1 -right-1"
-                    onClick={onToggle}
+                    onClick={() => updateSidebarCollapsed(false)}
                   >
                     <Menu className="h-3 w-3" color="white" />
                     <span className="sr-only">Expandir sidebar</span>
@@ -229,12 +225,12 @@ export function Sidebar({
                         pathname === route.href
                           ? "bg-white/20 text-white"
                           : "text-white/80 hover:text-white hover:bg-white/10",
-                        isCollapsed && "justify-center px-0"
+                        sidebarCollapsed && "justify-center px-0"
                       )}
                       onClick={() => handleNavigation(route.href)}
                     >
                       <route.icon className="h-5 w-5" />
-                      {!isCollapsed && (
+                      {!sidebarCollapsed && (
                         <>
                           <span>{route.title}</span>
                           {pathname === route.href && (
@@ -244,7 +240,7 @@ export function Sidebar({
                       )}
                     </Button>
                   </TooltipTrigger>
-                  {isCollapsed && (
+                  {sidebarCollapsed && (
                     <TooltipContent side="right">{route.title}</TooltipContent>
                   )}
                 </Tooltip>
@@ -257,14 +253,14 @@ export function Sidebar({
             variant="ghost"
             className={cn(
               "w-full rounded-xl text-white/80 hover:text-white hover:bg-white/10",
-              isCollapsed ? "justify-center px-0" : "justify-start"
+              sidebarCollapsed ? "justify-center px-0" : "justify-start"
             )}
             onClick={() => {
               signOut();
             }}
           >
-            <LogOut className={cn("h-5 w-5", !isCollapsed && "mr-2")} />
-            {!isCollapsed && <span>Sair</span>}
+            <LogOut className={cn("h-5 w-5", !sidebarCollapsed && "mr-2")} />
+            {!sidebarCollapsed && <span>Sair</span>}
           </Button>
         </div>
       </aside>

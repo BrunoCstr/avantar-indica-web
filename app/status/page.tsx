@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
 import { Search, SlidersHorizontal, Clipboard } from "lucide-react"
 
 interface Indicacao {
@@ -50,8 +51,8 @@ export default function StatusPage() {
     <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative bg-gradient-to-b from-[#F6F3FF] to-white pb-24 lg:pb-0 lg:ml-64">
-        <div className="fixed inset-0 lg:left-64 bg-white-responsive" />
+      <PageContainer className="bg-gradient-to-b from-[#F6F3FF] to-white pb-24 lg:pb-0">
+        <PageBackground className="bg-white-responsive" />
 
         <div className="relative z-10 p-6 lg:px-8 lg:py-6">
           <div className="mb-6 flex items-center justify-between lg:border-b lg:border-gray-200 lg:pb-6">
@@ -234,7 +235,7 @@ export default function StatusPage() {
         </div>
 
         <BottomNav />
-      </div>
+      </PageContainer>
     </>
   )
 }

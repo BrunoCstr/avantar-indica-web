@@ -1,7 +1,7 @@
 {
   "name": "Avantar Indica",
   "short_name": "Avantar",
-  "description": "App de indicações e comissões da Avantar",
+  "description": "O Avantar Indica é o aplicativo oficial da Rede Avantar, desenvolvido para que você possa transformar suas indicações em recompensas reais! Indique amigos, familiares ou contatos para fechar seguros, consórcios ou planos de saúde e receba cashback em produtos ou comissão em dinheiro, de forma rápida, simples e segura.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#170138",
@@ -9,16 +9,28 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/appLogo-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/jpeg",
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/appLogo-192.png",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/appLogo-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/appLogo-512.png",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
     }
   ]
 }

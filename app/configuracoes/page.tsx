@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
+import { UISettings } from "@/components/ui-settings"
 import { Bell, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react"
 
 export default function ConfiguracoesPage() {
@@ -61,11 +63,11 @@ export default function ConfiguracoesPage() {
   }
 
   return (
-    <div className="min-h-screen lg:pl-64">
+    <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative pb-24 lg:pb-8">
-        <div className="fixed inset-0 lg:left-64 bg-dark-responsive" />
+      <PageContainer className="pb-24 lg:pb-8">
+        <PageBackground />
 
         <div className="relative z-10 p-6 max-w-4xl mx-auto">
           {/* Header Mobile */}
@@ -74,6 +76,11 @@ export default function ConfiguracoesPage() {
           </div>
 
           <h1 className="text-3xl font-bold text-white text-center mb-8">Configurações</h1>
+
+          {/* Seção de Configurações de Interface */}
+          <div className="mb-6">
+            <UISettings />
+          </div>
 
           {/* Seção de Notificações */}
           <div className="bg-white rounded-3xl p-6 mb-6">
@@ -254,7 +261,9 @@ export default function ConfiguracoesPage() {
             </button>
           </div>
         </div>
-      </div>
+
+        <BottomNav />
+      </PageContainer>
 
       {/* Modal de Confirmação */}
       {showDeleteModal && (
@@ -287,8 +296,6 @@ export default function ConfiguracoesPage() {
           </div>
         </div>
       )}
-
-      <BottomNav />
-    </div>
+    </>
   )
 }

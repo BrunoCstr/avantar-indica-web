@@ -143,12 +143,12 @@ const DashboardChart = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-          <p className="font-semibold text-[#4A04A5]">{label}</p>
-          <p className="text-sm text-gray-600">
+        <div className="bg-white dark:bg-card p-3 rounded-lg shadow-lg border border-gray-200 dark:border-tertiary-purple">
+          <p className="font-semibold text-primary-purple dark:text-blue">{label}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Valor: <span className="font-bold">{data.formattedValue}</span>
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Indicações: <span className="font-bold">{data.count}</span>
           </p>
         </div>
@@ -161,7 +161,7 @@ const DashboardChart = () => {
   const renderCustomBar = (entry: any, index: number) => {
     const isActive = entry.value > 0
     const colors = isActive 
-      ? ['#4E00A7', '#6800E0'] 
+      ? ['#4A04A5', '#6800E0'] // primary-purple to fourth-purple
       : ['#E5E7EB', '#E5E7EB']
     
     return (
@@ -178,19 +178,19 @@ const DashboardChart = () => {
     <div className="bg-transparent rounded-lg shadow-sm">
       {/* Header com seletores de período */}
       <div className="mb-6 flex justify-center">
-        <div className="flex items-center justify-center bg-[#f4f0ff] rounded-lg p-1 w-full">
+        <div className="flex items-center justify-center bg-white dark:bg-card rounded-lg p-1 w-full border border-gray-200 dark:border-tertiary-purple">
           {['Semana', 'Mês', 'Ano'].map(period => (
             <button
               key={period}
               className={`flex-1 px-1 flex justify-center items-center rounded-lg transition-all duration-200 ${
-                selectedPeriod === period ? 'bg-orange-500 shadow-md' : 'hover:bg-orange-100'
+                selectedPeriod === period ? 'bg-orange shadow-md' : 'hover:bg-second-orange/20 dark:hover:bg-second-orange/10'
               }`}
               onClick={() => setSelectedPeriod(period)}
             >
               <div className="w-24 h-6 flex items-center justify-center">
                 <span
                   className={`text-xs font-normal text-center transition-colors duration-200 ${
-                    selectedPeriod === period ? 'text-white' : 'text-black'
+                    selectedPeriod === period ? 'text-white' : 'text-black dark:text-white'
                   }`}
                 >
                   {period}
@@ -205,7 +205,7 @@ const DashboardChart = () => {
       <div className="relative">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A04A5]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-purple dark:border-blue"></div>
           </div>
         ) : (
           <div className="h-64 w-full">
@@ -256,7 +256,7 @@ const DashboardChart = () => {
       {/* Informações adicionais */}
       {!isLoading && chartData.length > 0 && (
         <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Total: {chartData.reduce((sum, item) => sum + item.value, 0).toLocaleString('pt-BR', {
               style: 'currency',
               currency: 'BRL'

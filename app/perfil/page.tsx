@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
 import { LogOut, Edit, User, Phone, CreditCard } from "lucide-react"
 import Link from "next/link"
 
@@ -44,11 +45,11 @@ export default function PerfilPage() {
   }
 
   return (
-    <div className="min-h-screen lg:pl-64">
+    <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative pb-24 lg:pb-8">
-        <div className="fixed inset-0 bg-dark-responsive" />
+      <PageContainer className="pb-24 lg:pb-8">
+        <PageBackground />
 
         <div className="relative z-10 p-6">
           <div className="mb-6 flex items-center justify-between lg:hidden">
@@ -148,7 +149,7 @@ export default function PerfilPage() {
         </div>
 
         <BottomNav />
-      </div>
-    </div>
+      </PageContainer>
+    </>
   )
 }

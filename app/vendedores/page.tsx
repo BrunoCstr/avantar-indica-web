@@ -4,6 +4,7 @@ import { useState } from "react"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer } from "@/components/page-container"
 import { Search, UserPlus, Edit, Trash2, User } from "lucide-react"
 
 interface Vendedor {
@@ -41,9 +42,9 @@ export default function VendedoresPage() {
     <>
       <DesktopSidebar />
 
-      <div className="min-h-screen bg-[#4A04A5] pb-24 lg:pb-0 lg:ml-64">
+      <PageContainer className="bg-[#4A04A5] pb-24 lg:pb-0">
         {/* Pattern background */}
-        <div className="absolute inset-0 lg:left-64 opacity-10 pointer-events-none">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div
             className="absolute inset-0"
             style={{
@@ -184,7 +185,7 @@ export default function VendedoresPage() {
         </div>
 
         <BottomNav />
-      </div>
+      </PageContainer>
     </>
   )
 }

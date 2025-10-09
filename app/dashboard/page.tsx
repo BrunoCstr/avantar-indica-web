@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
 import { StatsCard } from "@/components/stats-card"
 import { IndicarModal } from "@/components/indicar-modal"
 import { BellRing, Shield, TrendingUp, Users, DollarSign, Target } from "lucide-react"
@@ -36,10 +37,10 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#4A04A5] flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-fifth-purple flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#29F3DF] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-white mt-4">Carregando...</p>
+          <div className="w-16 h-16 border-4 border-blue border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-primary-purple dark:text-white mt-4">Carregando...</p>
         </div>
       </div>
     )
@@ -51,17 +52,17 @@ export default function DashboardPage() {
     <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative pb-24 lg:pb-0 lg:ml-64">
+      <PageContainer>
         {/* Background image */}
-        <div className="fixed inset-0 lg:left-64 bg-dark-responsive" />
+        <PageBackground />
 
         {/* Content */}
         <div className="relative z-10">
-          {/* Header - Desktop version mais compacta */}
-          <div className="p-6 lg:px-8 lg:py-4 flex items-center justify-between border-b border-white/10">
+          {/* Header Mobile - Apenas para mobile */}
+          <div className="lg:hidden p-6 flex items-center justify-between border-b border-gray-200 dark:border-tertiary-purple">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-[#29F3DF] to-[#C352F2] p-0.5">
-                <div className="w-full h-full rounded-full bg-[#4A04A5] flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue to-pink p-0.5">
+                <div className="w-full h-full rounded-full bg-primary-purple dark:bg-fifth-purple flex items-center justify-center overflow-hidden">
                   <img
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-08%20at%2008.53.18%20(1)-rX4Qs-yLD9hO2Z3nnrE6RlwFyw2MmUebYn8r.jpeg"
                     alt="Profile"
@@ -70,14 +71,14 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl lg:text-xl font-bold text-white">
-                  Olá, <span className="text-[#29F3DF]">{firstName}</span>
+                <h1 className="text-2xl font-bold text-primary-purple dark:text-white">
+                  Olá, <span className="text-blue">{firstName}</span>
                 </h1>
-                <p className="text-white/80 text-sm">Seja bem-vindo de volta!</p>
+                <p className="text-gray-600 dark:text-white/80 text-sm">Seja bem-vindo de volta!</p>
               </div>
             </div>
-            <button className="w-12 h-12 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors">
-              <BellRing className="w-7 h-7 lg:w-5 lg:h-5 text-[#29F3DF]" />
+            <button className="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary-purple/10 dark:hover:bg-blue/10 transition-colors">
+              <BellRing className="w-7 h-7 text-blue" />
             </button>
           </div>
 
@@ -275,7 +276,7 @@ export default function DashboardPage() {
         </div>
 
         <BottomNav onIndicarClick={() => setIsIndicarModalOpen(true)} />
-      </div>
+      </PageContainer>
 
       {/* Indicar Modal */}
       <IndicarModal 

@@ -1,33 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export default function SplashScreen() {
   const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  useEffect(() => {
-    // Verifica se usuário está autenticado
-    const token = localStorage.getItem("avantar_token")
-    if (token) {
-      setIsAuthenticated(true)
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 2000)
-    }
-  }, [router])
-
-  if (isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-primary-dark flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-24 h-24 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-white mt-4 text-lg">Carregando...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -38,9 +14,9 @@ export default function SplashScreen() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-between px-170 p-6 pb-6">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-between px-[45rem] p-6 pb-6">
         {/* Logo */}
-        <div className="flex-1 flex flex-col items-start justify-start -mt-10">
+        <div className="flex-1 flex flex-col items-start justify-start">
           <img src="/avantar_seguros_consorcios_planos_de_saude.svg" alt="Logo" className="w-55 h-55" />
         </div>
 

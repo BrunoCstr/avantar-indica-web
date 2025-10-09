@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
+import { PageContainer, PageBackground } from "@/components/page-container"
 import { Eye, EyeOff, DollarSign, RefreshCw } from "lucide-react"
 import DashboardChart from "@/components/dashboard-chart"
 
@@ -243,9 +244,9 @@ export default function CarteiraPage() {
     <>
       <DesktopSidebar />
 
-      <div className="min-h-screen relative pb-24 lg:pb-0 lg:ml-64">
+      <PageContainer>
         {/* Background branco */}
-        <div className="fixed inset-0 lg:left-64 bg-white-responsive" />
+        <PageBackground className="bg-white-responsive" />
 
         <div className="relative z-10 flex flex-col min-h-screen">
           {/* Pull to refresh indicator */}
@@ -365,7 +366,7 @@ export default function CarteiraPage() {
         </div>
 
         <BottomNav />
-      </div>
+      </PageContainer>
 
       {/* Modal Customizado */}
       {isModalVisible && (
