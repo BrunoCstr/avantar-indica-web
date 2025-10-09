@@ -71,9 +71,9 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("tipos")}
-              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
                 {title}
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
@@ -132,9 +132,9 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("recompensas")}
-              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
                 RECOMPENSAS
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
@@ -164,9 +164,9 @@ export function RulesComponent({
           <div>
             <button
               onClick={() => toggleSection("bonificacao")}
-              className="w-full bg-white dark:bg-card rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
                 BONIFICAÇÃO
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">

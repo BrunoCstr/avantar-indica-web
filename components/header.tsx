@@ -86,13 +86,13 @@ export function Header({ userType }: HeaderProps) {
       className={cn(
         "sticky top-0 z-30 flex h-16 items-center gap-2 border-b backdrop-blur px-2 md:px-6",
         "bg-white border-gray-200",
-        "dark:bg-fifth-purple dark:border-[#9093A0]/20"
+        "dark:bg-[#190d26] dark:border-[#9093A0]/20"
       )}
     >
       <div className="flex flex-1 items-center justify-between">
         <div className="flex items-center gap-2">
           <h1 className="md:ml-0 ml-14 text-lg md:text-xl font-bold text-fifth-purple dark:text-white truncate">
-            Olá, <span className="text-primary-purple dark:text-secondary-purple">{firstName}</span> seja {isFirstAcess ? "bem vindo!" : "bem vindo de volta!"}
+            Olá, <span className="text-primary-purple dark:text-blue">{firstName}</span> seja {isFirstAcess ? "bem vindo!" : "bem vindo de volta!"}
           </h1>
         </div>
 

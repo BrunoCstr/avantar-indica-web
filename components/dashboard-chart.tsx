@@ -143,14 +143,20 @@ const DashboardChart = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white dark:bg-card p-3 rounded-lg shadow-lg border border-gray-200 dark:border-tertiary-purple">
-          <p className="font-semibold text-primary-purple dark:text-blue">{label}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Valor: <span className="font-bold">{data.formattedValue}</span>
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Indicações: <span className="font-bold">{data.count}</span>
-          </p>
+        <div className="bg-white dark:bg-[#190d26] rounded-lg shadow-lg border border-gray-200 dark:border-tertiary-purple overflow-hidden">
+          {/* Header com gradiente roxo claro */}
+          <div className="bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 p-3">
+            <p className="font-semibold text-white dark:text-blue">{label}</p>
+          </div>
+          {/* Conteúdo */}
+          <div className="p-3">
+            <p className="text-sm text-white dark:text-gray-300">
+              Valor: <span className="font-bold">{data.formattedValue}</span>
+            </p>
+            <p className="text-sm text-white dark:text-gray-300">
+              Indicações: <span className="font-bold">{data.count}</span>
+            </p>
+          </div>
         </div>
       )
     }
@@ -178,7 +184,7 @@ const DashboardChart = () => {
     <div className="bg-transparent rounded-lg shadow-sm">
       {/* Header com seletores de período */}
       <div className="mb-6 flex justify-center">
-        <div className="flex items-center justify-center bg-white dark:bg-card rounded-lg p-1 w-full border border-gray-200 dark:border-tertiary-purple">
+        <div className="flex items-center justify-center bg-white dark:bg-[#190d26] rounded-lg p-1 w-full border border-gray-200 dark:border-tertiary-purple">
           {['Semana', 'Mês', 'Ano'].map(period => (
             <button
               key={period}

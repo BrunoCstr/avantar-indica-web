@@ -37,7 +37,7 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white dark:bg-fifth-purple flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#190d26] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-primary-purple dark:text-white mt-4">Carregando...</p>
@@ -62,7 +62,7 @@ export default function DashboardPage() {
           <div className="lg:hidden p-6 flex items-center justify-between border-b border-gray-200 dark:border-tertiary-purple">
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue to-pink p-0.5">
-                <div className="w-full h-full rounded-full bg-primary-purple dark:bg-fifth-purple flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full rounded-full bg-primary-purple dark:bg-[#190d26] flex items-center justify-center overflow-hidden">
                   <img
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-08%20at%2008.53.18%20(1)-rX4Qs-yLD9hO2Z3nnrE6RlwFyw2MmUebYn8r.jpeg"
                     alt="Profile"
@@ -143,10 +143,10 @@ export default function DashboardPage() {
                     {/* Botão REGRAS na mesma linha no desktop */}
                     <Link
                       href="/regras"
-                      className="hidden lg:flex bg-gradient-to-br from-[#F28907] to-[#E06400] border-2 border-[#F28907]/50 rounded-xl p-6 hover:from-[#F28907]/90 hover:to-[#E06400]/90 transition-all flex-col items-center justify-center gap-3 group shadow-lg"
+                      className="bg-gradient-to-br from-[#F28907]/20 to-[#F28907]/5 border-2 border-[#F28907] rounded-xl p-4 lg:p-6 hover:from-[#F28907]/30 hover:to-[#F28907]/10 transition-all flex flex-col items-center justify-center gap-2 lg:gap-3 group"
                     >
-                      <div className="w-14 h-14 rounded-xl bg-white/20 group-hover:bg-white/30 transition-colors flex items-center justify-center">
-                        <Shield className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 rounded-xl bg-[#F28907]/20 group-hover:bg-[#F28907]/30 transition-colors flex items-center justify-center">
+                        <Shield className="w-7 h-7 text-[#E06400]" />
                       </div>
                       <h3 className="text-white font-bold text-base">REGRAS</h3>
                     </Link>
@@ -165,9 +165,9 @@ export default function DashboardPage() {
 
               {/* Indicações Card */}
               <div className="mx-6 lg:mx-0">
-                <div className="bg-white rounded-2xl lg:rounded-xl p-6 shadow-sm lg:min-h-[350px] flex flex-col">
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-2xl lg:rounded-xl p-6 shadow-sm lg:min-h-[350px] flex flex-col">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl lg:text-xl font-bold text-[#4A04A5]">Indicações</h2>
+                    <h2 className="text-2xl lg:text-xl font-bold text-white dark:text-white">Indicações</h2>
                     <button className="w-10 h-10 lg:w-9 lg:h-9 rounded-lg bg-[#4A04A5] flex items-center justify-center hover:bg-[#4A04A5]/90 transition-colors">
                       <svg className="w-5 h-5 lg:w-4 lg:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path
@@ -185,10 +185,10 @@ export default function DashboardPage() {
                     <div className="w-20 h-20 lg:w-20 lg:h-20 mx-auto mb-6 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
                       <Shield className="w-10 h-10 text-[#C352F2]" />
                     </div>
-                    <h3 className="text-xl lg:text-lg font-bold text-[#4A04A5] mb-2">
+                    <h3 className="text-xl lg:text-lg font-bold text-white dark:text-white mb-2">
                       Nenhuma indicação encontrada
                     </h3>
-                    <p className="text-gray-600 text-sm max-w-md">
+                    <p className="text-white dark:text-gray-300 text-sm max-w-md">
                       Você ainda não possui indicações registradas. Quando você indicar alguém, elas aparecerão aqui!
                     </p>
                   </div>
@@ -199,35 +199,35 @@ export default function DashboardPage() {
               {/* Sidebar - 4 columns on desktop */}
               <div className="hidden lg:block lg:col-span-4 space-y-4">
                 {/* Quick Stats */}
-                <div className="bg-white rounded-xl p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-[#4A04A5] mb-4">Desempenho do Mês</h3>
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
+                  <h3 className="text-base font-bold text-white dark:text-white mb-4">Desempenho do Mês</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-xs">Meta de Indicações</span>
-                      <span className="font-bold text-[#4A04A5] text-sm">0/10</span>
+                      <span className="text-white dark:text-gray-300 text-xs">Meta de Indicações</span>
+                      <span className="font-bold text-white dark:text-blue text-sm">0/10</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                       <div
                         className="bg-gradient-to-r from-[#29F3DF] to-[#C352F2] h-2 rounded-full transition-all"
                         style={{ width: "0%" }}
                       />
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t">
-                      <span className="text-gray-600 text-xs">Comissão Prevista</span>
-                      <span className="font-bold text-[#F28907] text-sm">R$ 0,00</span>
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-600">
+                      <span className="text-white dark:text-gray-300 text-xs">Comissão Prevista</span>
+                      <span className="font-bold text-orange dark:text-orange text-sm">R$ 0,00</span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-xs">Próximo Pagamento</span>
-                      <span className="font-bold text-[#4A04A5] text-sm">--/--/----</span>
+                      <span className="text-white dark:text-gray-300 text-xs">Próximo Pagamento</span>
+                      <span className="font-bold text-white dark:text-blue text-sm">--/--/----</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Actions */}
-                <div className="bg-white rounded-xl p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-[#4A04A5] mb-4">Ações Rápidas</h3>
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
+                  <h3 className="text-base font-bold text-white dark:text-white mb-4">Ações Rápidas</h3>
                   <div className="space-y-2">
                     <Link
                       href="/status"
@@ -236,7 +236,7 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#C352F2]/20 flex items-center justify-center group-hover:bg-[#C352F2]/30 transition-colors">
                         <Target className="w-4 h-4 text-[#C352F2]" />
                       </div>
-                      <span className="text-sm font-medium text-[#4A04A5]">Status das Propostas</span>
+                      <span className="text-sm font-medium text-white dark:text-white">Status das Propostas</span>
                     </Link>
 
                     <Link
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#29F3DF]/20 flex items-center justify-center group-hover:bg-[#29F3DF]/30 transition-colors">
                         <DollarSign className="w-4 h-4 text-[#29F3DF]" />
                       </div>
-                      <span className="text-sm font-medium text-[#4A04A5]">Minha Carteira</span>
+                      <span className="text-sm font-medium text-white dark:text-white">Minha Carteira</span>
                     </Link>
 
                     <Link
@@ -256,7 +256,7 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#F28907]/20 flex items-center justify-center group-hover:bg-[#F28907]/30 transition-colors">
                         <Users className="w-4 h-4 text-[#F28907]" />
                       </div>
-                      <span className="text-sm font-medium text-[#4A04A5]">Vendedores</span>
+                      <span className="text-sm font-medium text-white dark:text-white">Vendedores</span>
                     </Link>
                   </div>
                 </div>
