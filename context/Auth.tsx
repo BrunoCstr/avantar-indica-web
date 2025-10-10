@@ -49,7 +49,7 @@ interface AuthContextData {
       | "admin_franqueadora"
       | "admin_unidade"
       | "nao_definido"
-  ) => Promise<void | string>;
+  ) => Promise<string | undefined>;
   signUp: (
     fullName: string,
     email: string,
@@ -300,7 +300,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       setIsLoadingLogin(false);
-      return "Autenticado com sucesso, redirecionando...";
+      return undefined;
     } catch (err: any) {
       setIsLoadingLogin(false);
       switch (err.code) {

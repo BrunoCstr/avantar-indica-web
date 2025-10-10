@@ -43,22 +43,22 @@ export function DesktopSidebar({
   }, []);
 
   const parceiro_indicador_routes = [
-    { href: "indicador/dashboard", icon: Home, title: "Dashboard" },
-    { href: "indicador/carteira", icon: Wallet, title: "Carteira" },
-    { href: "indicador/status", icon: ClipboardList, title: "Status" },
-    { href: "indicador/vendedores", icon: Users, title: "Vendedores" },
-    { href: "indicador/notificacoes", icon: Bell, title: "Notificações" },
-    { href: "indicador/configuracoes", icon: Settings, title: "Configurações" },
-    { href: "indicador/perfil", icon: User, title: "Perfil" },
+    { href: "/dashboard", icon: Home, title: "Dashboard" },
+    { href: "/carteira", icon: Wallet, title: "Carteira" },
+    { href: "/status", icon: ClipboardList, title: "Status" },
+    { href: "/vendedores", icon: Users, title: "Vendedores" },
+    { href: "/notificacoes", icon: Bell, title: "Notificações" },
+    { href: "/perfil", icon: User, title: "Perfil" },
+    { href: "/configuracoes", icon: Settings, title: "Configurações" },
   ];
 
   const cliente_indicador_routes = [
-    { href: "indicador/dashboard", icon: Home, title: "Dashboard" },
-    { href: "indicador/carteira", icon: Wallet, title: "Carteira" },
-    { href: "indicador/status", icon: ClipboardList, title: "Status" },
-    { href: "indicador/notificacoes", icon: Bell, title: "Notificações" },
-    { href: "indicador/configuracoes", icon: Settings, title: "Configurações" },
-    { href: "indicador/perfil", icon: User, title: "Perfil" },
+    { href: "/dashboard", icon: Home, title: "Dashboard" },
+    { href: "/carteira", icon: Wallet, title: "Carteira" },
+    { href: "/status", icon: ClipboardList, title: "Status" },
+    { href: "/notificacoes", icon: Bell, title: "Notificações" },
+    { href: "/perfil", icon: User, title: "Perfil" },
+    { href: "/configuracoes", icon: Settings, title: "Configurações" },
   ];
 
   const routes = userType === "parceiro_indicador" ? parceiro_indicador_routes : cliente_indicador_routes;

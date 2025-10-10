@@ -143,17 +143,17 @@ const DashboardChart = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white dark:bg-[#190d26] rounded-lg shadow-lg border border-gray-200 dark:border-tertiary-purple overflow-hidden">
+        <div className="bg-white dark:bg-[#190d26] rounded-lg shadow-lg border border-gray dark:border-tertiary-purple overflow-hidden">
           {/* Header com gradiente roxo claro */}
           <div className="bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 p-3">
             <p className="font-semibold text-white dark:text-blue">{label}</p>
           </div>
           {/* Conteúdo */}
           <div className="p-3">
-            <p className="text-sm text-white dark:text-gray-300">
+            <p className="text-sm text-white dark:text-gray">
               Valor: <span className="font-bold">{data.formattedValue}</span>
             </p>
-            <p className="text-sm text-white dark:text-gray-300">
+            <p className="text-sm text-white dark:text-gray">
               Indicações: <span className="font-bold">{data.count}</span>
             </p>
           </div>
@@ -184,18 +184,18 @@ const DashboardChart = () => {
     <div className="bg-transparent rounded-lg shadow-sm">
       {/* Header com seletores de período */}
       <div className="mb-6 flex justify-center">
-        <div className="flex items-center justify-center bg-white dark:bg-[#190d26] rounded-lg p-1 w-full border border-gray-200 dark:border-tertiary-purple">
+        <div className="flex items-center justify-center bg-white dark:bg-[#190d26] rounded-lg p-1 w-full border border-gray dark:border-tertiary-purple">
           {['Semana', 'Mês', 'Ano'].map(period => (
             <button
               key={period}
-              className={`flex-1 px-1 flex justify-center items-center rounded-lg transition-all duration-200 ${
+              className={`flex-1 px-1 flex justify-center items-center rounded-lg transition-all duration ${
                 selectedPeriod === period ? 'bg-orange shadow-md' : 'hover:bg-second-orange/20 dark:hover:bg-second-orange/10'
               }`}
               onClick={() => setSelectedPeriod(period)}
             >
               <div className="w-24 h-6 flex items-center justify-center">
                 <span
-                  className={`text-xs font-normal text-center transition-colors duration-200 ${
+                  className={`text-xs font-normal text-center transition-colors duration ${
                     selectedPeriod === period ? 'text-white' : 'text-black dark:text-white'
                   }`}
                 >
@@ -262,7 +262,7 @@ const DashboardChart = () => {
       {/* Informações adicionais */}
       {!isLoading && chartData.length > 0 && (
         <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-black dark:text-gray">
             Total: {chartData.reduce((sum, item) => sum + item.value, 0).toLocaleString('pt-BR', {
               style: 'currency',
               currency: 'BRL'

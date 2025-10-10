@@ -245,10 +245,16 @@ export default function CarteiraPage() {
       <DesktopSidebar />
 
       <PageContainer>
-        {/* Background branco */}
-        <PageBackground className="bg-white-responsive" />
+        {/* Background - Mobile: bg-white-responsive | Desktop: cor sólida do tema */}
+        <div className="lg:hidden">
+          <PageBackground className="bg-white-responsive" />
+        </div>
+        <div className="hidden lg:block">
+          <PageBackground />
+        </div>
 
-        <div className="relative z-10 flex flex-col min-h-screen">
+        {/* LAYOUT MOBILE - Mantém o design atual intacto */}
+        <div className="lg:hidden relative z-10 flex flex-col min-h-screen">
           {/* Pull to refresh indicator */}
           {refreshing && (
             <div className="flex justify-center py-4">
@@ -259,15 +265,13 @@ export default function CarteiraPage() {
           {/* Header com botão de voltar */}
           <div className="pt-10">
             <div className="flex justify-between items-center px-6">
-              <div className="lg:hidden">
-                <BackButton bgColor="#4A04A5"/>
-              </div>
+              <BackButton bgColor="purple"/>
             </div>
           </div>
 
           {/* Card principal com saldo */}
           <div className="px-6 mt-6">
-            <div className="bg-[#f4f0ff] rounded-3xl h-30 flex justify-center items-center relative">
+            <div className="bg-[#f4f0ff] rounded-3xl h-28 flex justify-center items-center relative">
               <div className="w-full h-full bg-gradient-to-r from-[#4E00A7] to-[#6800E0] rounded-2xl flex flex-col justify-center items-center">
                 <p className="text-white text-sm font-normal">Saldo Disponível para Saque</p>
                 <div className="flex items-end justify-center mt-2">
@@ -336,7 +340,7 @@ export default function CarteiraPage() {
                   <p className="text-[#4A04A5] text-sm font-normal text-center mt-2">
                     Nenhuma solicitação de saque encontrada
                   </p>
-                  <p className="text-gray-500 text-sm font-normal text-center mt-1">
+                  <p className="text-black dark:text-gray text-sm font-normal text-center mt-1">
                     Suas solicitações aparecerão aqui
                   </p>
                 </div>
@@ -365,6 +369,187 @@ export default function CarteiraPage() {
           </div>
         </div>
 
+        {/* LAYOUT DESKTOP - Nova interface web */}
+        <div className="hidden lg:block relative z-10">
+          <div className="px-8 py-6">
+            <div className="grid grid-cols-12 gap-6">
+              {/* Coluna Principal - Carteira e Saque (8 colunas) */}
+              <div className="col-span-8 space-y-6">
+                {/* Card de Saldo */}
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-black dark:text-white">Carteira</h2>
+                    <button
+                      onClick={() => setShowBalance(!showBalance)}
+                      className="p-2 rounded-lg bg-gray-100 dark:bg-[#4A04A5]/20 hover:bg-gray-200 dark:hover:bg-[#4A04A5]/30 transition-colors"
+                    >
+                      {showBalance ? (
+                        <EyeOff className="w-5 h-5 text-black dark:text-white" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-black dark:text-white" />
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-[#4E00A7] to-[#6800E0] rounded-xl p-8">
+                    <p className="text-white/80 text-sm font-medium mb-2">Saldo Disponível para Saque</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-[#29F3DF] text-2xl font-bold">R$</span>
+                      {showBalance ? (
+                        <span className="text-[#29F3DF] text-5xl font-bold">
+                          {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      ) : (
+                        <span className="text-[#29F3DF] text-5xl font-bold">******</span>
+                      )}
+                    </div>
+                    
+                    {/* Botão de Saque */}
+                    <button
+                      onClick={handleWithdrawalRequest}
+                      disabled={isLoadingButton}
+                      className="mt-6 w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 disabled:bg-[#29F3DF]/50 text-[#4A04A5] font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      {isLoadingButton ? (
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#4A04A5]"></div>
+                      ) : (
+                        <>
+                          <DollarSign className="w-5 h-5" />
+                          <span>Solicitar Saque</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Histórico de Saques */}
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-black dark:text-white">Histórico de Saques</h3>
+                    <button
+                      onClick={onRefresh}
+                      disabled={refreshing}
+                      className="p-2 rounded-lg bg-gray-100 dark:bg-[#4A04A5]/20 hover:bg-gray-200 dark:hover:bg-[#4A04A5]/30 transition-colors"
+                    >
+                      <RefreshCw className={`w-5 h-5 text-black dark:text-white ${refreshing ? 'animate-spin' : ''}`} />
+                    </button>
+                  </div>
+
+                  {data.length > 0 ? (
+                    <div className="space-y-3">
+                      {data.map((item) => (
+                        <div 
+                          key={item.withdrawId} 
+                          className="bg-gray-50 dark:bg-[#4A04A5]/10 border border-gray-100 dark:border-[#4A04A5]/20 rounded-lg p-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#4A04A5]/20 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#4E00A7] to-[#6800E0] flex items-center justify-center">
+                              <DollarSign className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-black dark:text-white">
+                                {item.createdAt.toDate().toLocaleDateString('pt-BR', { 
+                                  day: '2-digit', 
+                                  month: 'long', 
+                                  year: 'numeric' 
+                                })}
+                              </p>
+                              <p className="text-xs text-black dark:text-gray">
+                                ID: {item.withdrawId}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-6">
+                            <span className="text-lg font-bold text-black dark:text-white">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                              }).format(item.amount)}
+                            </span>
+                            <span
+                              className="px-4 py-2 rounded-full text-xs font-bold"
+                              style={{
+                                backgroundColor: item.status === 'PAGO' ? '#10B981' : 
+                                               item.status === 'RECUSADO' ? '#EF4444' : '#4A04A5',
+                                color: 'white'
+                              }}
+                            >
+                              {item.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-[#4A04A5]/10 flex items-center justify-center">
+                        <DollarSign className="w-8 h-8 text-[#4A04A5]" />
+                      </div>
+                      <h4 className="text-base font-bold text-black dark:text-white mb-2">
+                        Nenhuma solicitação de saque
+                      </h4>
+                      <p className="text-sm text-black dark:text-gray">
+                        Suas solicitações de saque aparecerão aqui
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Coluna Lateral - Dashboard de Recebimentos (4 colunas) */}
+              <div className="col-span-4 space-y-6">
+                {/* Resumo Financeiro */}
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-black dark:text-white mb-6">Resumo Financeiro</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-gradient-to-br from-[#29F3DF]/10 to-[#29F3DF]/5 border border-[#29F3DF]/20 rounded-lg p-4">
+                      <p className="text-xs text-black dark:text-gray mb-1">Recebido este mês</p>
+                      <p className="text-2xl font-bold text-[#29F3DF]">R$ 0,00</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-[#C352F2]/10 to-[#C352F2]/5 border border-[#C352F2]/20 rounded-lg p-4">
+                      <p className="text-xs text-black dark:text-gray mb-1">Pendente de recebimento</p>
+                      <p className="text-2xl font-bold text-[#C352F2]">R$ 0,00</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-[#F28907]/10 to-[#F28907]/5 border border-[#F28907]/20 rounded-lg p-4">
+                      <p className="text-xs text-black dark:text-gray mb-1">Total recebido</p>
+                      <p className="text-2xl font-bold text-[#F28907]">R$ 0,00</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gráfico de Recebimentos */}
+                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-black dark:text-white mb-4">Recebimentos</h3>
+                  <DashboardChart />
+                </div>
+
+                {/* Informações */}
+                <div className="bg-gradient-to-br from-[#4E00A7]/10 to-[#6800E0]/10 border border-[#4A04A5]/20 rounded-xl p-6">
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-3">Informações Importantes</h4>
+                  <ul className="text-xs text-black dark:text-gray space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#29F3DF] mt-1">•</span>
+                      <span>Valor mínimo para saque: R$ 700,00</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#29F3DF] mt-1">•</span>
+                      <span>Prazo médio de liberação: 10 dias úteis</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#29F3DF] mt-1">•</span>
+                      <span>Você receberá notificação quando o pagamento for realizado</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <BottomNav />
       </PageContainer>
 
@@ -374,7 +559,7 @@ export default function CarteiraPage() {
           <div className="bg-white rounded-3xl p-6 w-full max-w-md">
             <div className="text-center">
               <h3 className="text-xl font-bold text-[#4A04A5] mb-4">{modalMessage.title}</h3>
-              <p className="text-gray-600 mb-6">{modalMessage.description}</p>
+              <p className="text-black mb-6">{modalMessage.description}</p>
               <button
                 onClick={() => setIsModalVisible(false)}
                 className="w-full bg-[#4A04A5] text-white font-bold py-3 px-6 rounded-2xl"
