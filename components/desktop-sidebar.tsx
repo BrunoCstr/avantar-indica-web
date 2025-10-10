@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/Auth";
 import { useUISettings } from "@/hooks/useUISettings";
-import { Wallet, ClipboardList, Bell, User } from "lucide-react";
+import { Wallet, ClipboardList, Bell, User, UserPlus } from "lucide-react";
 
 interface SidebarProps {
   userType?: "parceiro_indicador" | "cliente_indicador";
@@ -44,6 +44,7 @@ export function DesktopSidebar({
 
   const parceiro_indicador_routes = [
     { href: "/dashboard", icon: Home, title: "Dashboard" },
+    { href: "/indicar-multiplos", icon: UserPlus, title: "Indicar Multiplos" },
     { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/status", icon: ClipboardList, title: "Status" },
     { href: "/vendedores", icon: Users, title: "Vendedores" },
@@ -54,6 +55,7 @@ export function DesktopSidebar({
 
   const cliente_indicador_routes = [
     { href: "/dashboard", icon: Home, title: "Dashboard" },
+    { href: "/indicar-multiplos", icon: UserPlus, title: "Indicar Multiplos" },
     { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/status", icon: ClipboardList, title: "Status" },
     { href: "/notificacoes", icon: Bell, title: "Notificações" },

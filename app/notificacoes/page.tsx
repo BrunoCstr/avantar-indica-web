@@ -125,7 +125,13 @@ export default function NotificacoesPage() {
       <DesktopSidebar />
 
       <PageContainer className="pb-24 lg:pb-8">
-        <PageBackground className="bg-white-responsive" />
+        {/* Background - Mobile: bg-white-responsive | Desktop: cor sólida do tema */}
+        <div className="lg:hidden">
+          <PageBackground className="bg-white-responsive" />
+        </div>
+        <div className="hidden lg:block">
+          <PageBackground />
+        </div>
 
         <div className="relative z-10 p-6 max-w-4xl mx-auto">
           {/* Header Mobile */}
@@ -148,7 +154,7 @@ export default function NotificacoesPage() {
               )}
             </div>
             {unreadCount > 0 && (
-              <p className="text-gray-600">
+              <p className="text-white">
                 Você tem {unreadCount} {unreadCount === 1 ? "notificação não lida" : "notificações não lidas"}
               </p>
             )}

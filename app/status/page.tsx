@@ -64,7 +64,7 @@ export default function StatusPage() {
           <div className="mb-6 flex items-center justify-between lg:border-b lg:border-gray-200 dark:lg:border-tertiary-purple lg:pb-6">
             <div className="flex items-center gap-4">
               <div className="lg:hidden">
-                <BackButton bgColor="#4A04A5" />
+                <BackButton bgColor="purple" />
               </div>
               <h1 className="text-2xl lg:text-3xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white">Status das Propostas</h1>
             </div>
@@ -91,42 +91,42 @@ export default function StatusPage() {
           <div className="grid grid-cols-4 lg:grid-cols-4 gap-2 mb-2">
             <button
               onClick={() => setFiltro("Pendente")}
-              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 shadow-md border-gray transition-all ${
+              className={`bg-white dark:lg:bg-[#190d26] rounded-2xl p-1 lg:border-2 shadow-md border-gray transition-all ${
                 filtro === "Pendente" ? "border-[#F28907]" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
               <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.pendente}</div>
-              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Pendente</div>
+              <div className="text-xs text-black lg:text-black lg:dark:text-gray">Pendente</div>
             </button>
 
             <button
               onClick={() => setFiltro("Em contato")}
-              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 border-2 transition-all shadow-md ${
+              className={`bg-white dark:lg:bg-[#190d26] rounded-2xl p-1 lg:border-2 transition-all shadow-md ${
                 filtro === "Em contato" ? "border-blue-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
               <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.emContato}</div>
-              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Em contato</div>
+              <div className="text-xs text-black lg:text-black lg:dark:text-gray">Em contato</div>
             </button>
 
             <button
               onClick={() => setFiltro("Fechados")}
-              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1  border-2 transition-all shadow-md ${
+              className={`bg-white dark:lg:bg-[#190d26] rounded-2xl p-1  lg:border-2 transition-all shadow-md ${
                 filtro === "Fechados" ? "border-green-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
               <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.fechados}</div>
-              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Fechados</div>
+              <div className="text-xs text-black lg:text-black lg:dark:text-gray">Fechados</div>
             </button>
 
             <button
               onClick={() => setFiltro("Não fechado")}
-              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 border-2 transition-all shadow-md ${
+              className={`bg-white dark:lg:bg-[#190d26] rounded-2xl p-1 lg:border-2 transition-all shadow-md ${
                 filtro === "Não fechado" ? "border-red-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
               <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.naoFechado}</div>
-              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Não fechado</div>
+              <div className="text-xs text-black lg:text-black lg:dark:text-gray">Não fechado</div>
             </button>
           </div>
 
@@ -136,7 +136,7 @@ export default function StatusPage() {
                 <Clipboard className="w-10 h-10 text-[#C352F2]" />
               </div>
               <h3 className="text-xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">Nenhum resultado encontrado</h3>
-              <p className="text-gray-600 lg:text-black lg:dark:text-gray text-sm leading-relaxed px-8">
+              <p className="text-black lg:text-black lg:dark:text-gray text-sm leading-relaxed px-8">
                 Você ainda não possui oportunidades ou indicações registradas. Quando você indicar alguém, elas
                 aparecerão aqui!
               </p>
@@ -173,14 +173,14 @@ export default function StatusPage() {
                           <p className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white">{ind.nome}</p>
                         </td>
                         <td className="py-4 px-6">
-                          <p className="text-sm text-gray-600 dark:text-gray">{ind.email}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray">{ind.telefone}</p>
+                          <p className="text-sm text-gray dark:text-gray">{ind.email}</p>
+                          <p className="text-sm text-gray dark:text-gray">{ind.telefone}</p>
                         </td>
                         <td className="py-4 px-6">
                           <span className="text-sm text-[#29F3DF] font-medium">{ind.produto}</span>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-sm text-gray-600 dark:text-gray">
+                          <span className="text-sm text-gray dark:text-gray">
                             {new Date(ind.data).toLocaleDateString("pt-BR")}
                           </span>
                         </td>
@@ -212,8 +212,8 @@ export default function StatusPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="font-bold text-[#4A04A5] text-lg mb-1">{ind.nome}</h3>
-                        <p className="text-sm text-gray-600">{ind.email}</p>
-                        <p className="text-sm text-gray-600">{ind.telefone}</p>
+                        <p className="text-sm text-gray">{ind.email}</p>
+                        <p className="text-sm text-gray">{ind.telefone}</p>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold ${

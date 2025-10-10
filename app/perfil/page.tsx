@@ -49,7 +49,13 @@ export default function PerfilPage() {
       <DesktopSidebar />
 
       <PageContainer className="pb-24 lg:pb-8">
-        <PageBackground />
+        {/* Background - Mobile: bg-white-responsive | Desktop: cor sólida do tema */}
+        <div className="lg:hidden">
+          <PageBackground className="bg-white-responsive" />
+        </div>
+        <div className="hidden lg:block">
+          <PageBackground />
+        </div>
 
         <div className="relative z-10 p-6">
           <div className="mb-6 flex items-center justify-between lg:hidden">
@@ -134,14 +140,14 @@ export default function PerfilPage() {
           <div className="space-y-4">
             <Link
               href="/configuracoes"
-              className="block w-full bg-[#F28907] hover:bg-[#F28907]/90 text-white font-bold py-5 px-6 rounded-2xl transition-colors text-lg text-center"
+              className="block w-full bg-[#F28907] border-b-4 border-r-4 border-[#E06400] hover:bg-[#F28907]/90 text-white font-bold py-5 px-6 rounded-2xl transition-colors text-lg text-center"
             >
               CONFIGURAÇÕES
             </Link>
 
             <Link
               href="/vendedores"
-              className="block w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-5 px-6 rounded-2xl transition-colors text-lg text-center"
+              className="block w-full bg-[#29F3DF] border-b-4 border-r-4 border-[#0EC8B5] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-5 px-6 rounded-2xl transition-colors text-lg text-center"
             >
               VENDEDORES
             </Link>
