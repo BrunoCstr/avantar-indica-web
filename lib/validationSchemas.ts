@@ -58,3 +58,57 @@ export const signUpSchema = z.object({
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 
+// Schema de validação para indicação
+export const indicationSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, 'Nome completo é obrigatório')
+    .min(3, 'Nome deve ter pelo menos 3 caracteres')
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
+  phone: z
+    .string()
+    .min(1, 'Telefone é obrigatório')
+    .refine((val) => {
+      // Remove caracteres não numéricos
+      const cleaned = val.replace(/\D/g, '');
+      return cleaned.length === 11;
+    }, 'Telefone deve ter 11 dígitos (DDD + número)'),
+  product: z
+    .string()
+    .min(1, 'Selecione um produto'),
+  observations: z
+    .string()
+    .optional(),
+});
+
+export type IndicationSchema = z.infer<typeof indicationSchema>;
+
+// Schema de validação para indicação múltipla (com email para consentimento B2B)
+export const multiIndicationSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, 'Nome completo é obrigatório')
+    .min(3, 'Nome deve ter pelo menos 3 caracteres')
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
+  email: z
+    .string()
+    .min(1, 'E-mail é obrigatório')
+    .email('E-mail inválido'),
+  phone: z
+    .string()
+    .min(1, 'Telefone é obrigatório')
+    .refine((val) => {
+      // Remove caracteres não numéricos
+      const cleaned = val.replace(/\D/g, '');
+      return cleaned.length === 11;
+    }, 'Telefone deve ter 11 dígitos (DDD + número)'),
+  product: z
+    .string()
+    .min(1, 'Selecione um produto'),
+  observations: z
+    .string()
+    .optional(),
+});
+
+export type MultiIndicationSchema = z.infer<typeof multiIndicationSchema>;
+

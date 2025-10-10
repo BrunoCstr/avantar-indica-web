@@ -43,8 +43,8 @@ export function DesktopSidebar() {
   const parceiro_indicador_routes = [
     { href: "/dashboard", icon: Home, title: "Dashboard" },
     { href: "/indicar-multiplos", icon: UserPlus, title: "Indicar Multiplos" },
-    { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/status", icon: ClipboardList, title: "Status" },
+    { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/vendedores", icon: Users, title: "Vendedores" },
     { href: "/notificacoes", icon: Bell, title: "Notificações" },
     { href: "/perfil", icon: User, title: "Perfil" },
@@ -54,8 +54,8 @@ export function DesktopSidebar() {
   const cliente_indicador_routes = [
     { href: "/dashboard", icon: Home, title: "Dashboard" },
     { href: "/indicar-multiplos", icon: UserPlus, title: "Indicar Multiplos" },
-    { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/status", icon: ClipboardList, title: "Status" },
+    { href: "/carteira", icon: Wallet, title: "Carteira" },
     { href: "/notificacoes", icon: Bell, title: "Notificações" },
     { href: "/perfil", icon: User, title: "Perfil" },
     { href: "/configuracoes", icon: Settings, title: "Configurações" },
