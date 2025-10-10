@@ -4,14 +4,10 @@ interface StatsCardProps {
   title: string
   value: string | number
   icon: LucideIcon
-  trend?: {
-    value: string
-    isPositive: boolean
-  }
   color?: "cyan" | "purple" | "orange" | "pink"
 }
 
-export function StatsCard({ title, value, icon: Icon, trend, color = "cyan" }: StatsCardProps) {
+export function StatsCard({ title, value, icon: Icon, color = "cyan" }: StatsCardProps) {
   const colorClasses = {
     cyan: "from-blue to-dark-blue",
     purple: "from-primary-purple to-pink",
@@ -29,18 +25,13 @@ export function StatsCard({ title, value, icon: Icon, trend, color = "cyan" }: S
           >
             <Icon className="w-5 h-5 text-white" />
           </div>
-          {trend && (
-            <span className={`text-xs font-bold ${trend.isPositive ? "text-green" : "text-red"}`}>
-              {trend.isPositive ? "↑" : "↓"} {trend.value}
-            </span>
-          )}
         </div>
       </div>
       
       {/* Conteúdo do card */}
       <div className="p-4">
-        <h3 className="text-white dark:text-gray-300 text-xs mb-1 font-medium">{title}</h3>
-        <p className="text-2xl font-bold text-white dark:text-blue">{value}</p>
+        <h3 className="text-black dark:text-gray text-xs mb-1 font-medium">{title}</h3>
+        <p className="text-2xl font-bold text-black dark:text-blue">{value}</p>
       </div>
     </div>
   )

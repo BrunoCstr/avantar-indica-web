@@ -61,6 +61,7 @@ export async function GET(req: NextRequest) {
         rule: decodedClaims.rule,
         unitName: userData?.unitName,
         unitId: userData?.unitId,
+        isFirstLogin: userData?.isFirstLogin,
         uiSettings: userData?.uiSettings || {
           sidebarCollapsed: false,
           theme: "light",

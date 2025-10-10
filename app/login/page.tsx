@@ -159,11 +159,11 @@ export default function LoginPage() {
                 type="text"
                 placeholder="Login"
                 className={`w-full bg-[#4A04A5]/30 border-2 ${
-                  errors.email ? "border-red-500" : "border-[#29F3DF]"
+                  errors.email ? "border-red" : "border-[#29F3DF]"
                 } text-white placeholder:text-white/60 px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1 ml-2">
+                <p className="text-red text-sm mt-1 ml-2">
                   {errors.email.message}
                 </p>
               )}
@@ -176,7 +176,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Senha"
                   className={`w-full bg-[#4A04A5]/30 border-2 ${
-                    errors.password ? "border-red-500" : "border-[#29F3DF]"
+                    errors.password ? "border-red" : "border-[#29F3DF]"
                   } text-white placeholder:text-white/60 px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
                 />
                 <button
@@ -192,7 +192,7 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1 ml-2">
+                <p className="text-red text-sm mt-1 ml-2">
                   {errors.password.message}
                 </p>
               )}

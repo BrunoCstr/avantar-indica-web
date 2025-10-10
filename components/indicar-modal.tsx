@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { ArrowLeft, ChevronDown } from "lucide-react"
+import { useAuth } from "@/context/Auth"
+import { AlertModal } from "@/components/alert-modal"
 
 interface IndicarModalProps {
   isOpen: boolean
@@ -9,6 +11,7 @@ interface IndicarModalProps {
 }
 
 export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
+  const { userData } = useAuth()
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -17,11 +20,22 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
     observacoes: "",
   })
   const [consentimento, setConsentimento] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Verifica se o usuário tem permissão para indicar
+    if (userData?.rule === "nao_definida") {
+      setAlertMessage("Seu cadastro ainda não foi aprovado pela unidade. Aguarde a aprovação para poder fazer indicações.")
+      setShowAlertModal(true)
+      return
+    }
+    
     if (!consentimento) {
-      alert("Você precisa confirmar que obteve consentimento do indicado")
+      setAlertMessage("Você precisa confirmar que obteve consentimento do indicado")
+      setShowAlertModal(true)
       return
     }
     
@@ -35,7 +49,8 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
     })
     localStorage.setItem("avantar_indicacoes", JSON.stringify(indicacoes))
     
-    alert("Indicação enviada com sucesso!")
+    setAlertMessage("Indicação enviada com sucesso!")
+    setShowAlertModal(true)
     
     // Reset form and close modal
     setFormData({
@@ -46,12 +61,17 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
       observacoes: "",
     })
     setConsentimento(false)
-    onClose()
+    
+    // Fecha o modal após um delay para mostrar a mensagem
+    setTimeout(() => {
+      onClose()
+    }, 100)
   }
 
   if (!isOpen) return null
 
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
@@ -166,5 +186,14 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
         </form>
       </div>
     </div>
+
+    {/* Alert Modal */}
+    <AlertModal
+      isOpen={showAlertModal}
+      onClose={() => setShowAlertModal(false)}
+      title={alertMessage.includes("sucesso") ? "Sucesso!" : alertMessage.includes("consentimento") ? "Atenção" : "Cadastro Pendente"}
+      message={alertMessage}
+    />
+    </>
   )
 }

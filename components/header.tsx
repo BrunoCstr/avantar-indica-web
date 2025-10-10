@@ -39,7 +39,9 @@ export function Header({ userType }: HeaderProps) {
   const profilePicture = userData?.profilePicture;
   const fullName = userData?.displayName;
   const firstName = fullName?.split(" ")[0];
-  const isFirstAcess = userData?.isFirstLogin;
+  const isFirstLogin  = userData;
+
+  console.log(isFirstLogin);
 
   useEffect(() => {
     if (!userData?.uid) return;
@@ -92,7 +94,7 @@ export function Header({ userType }: HeaderProps) {
       <div className="flex flex-1 items-center justify-between">
         <div className="flex items-center gap-2">
           <h1 className="md:ml-0 ml-14 text-lg md:text-xl font-bold text-fifth-purple dark:text-white truncate">
-            Olá, <span className="text-primary-purple dark:text-blue">{firstName}</span> seja {isFirstAcess ? "bem vindo!" : "bem vindo de volta!"}
+            Olá, <span className="text-primary-purple dark:text-blue">{firstName}</span> seja {isFirstLogin ? "bem-vindo! 👋" : "bem-vindo de volta! 👋"}
           </h1>
         </div>
 

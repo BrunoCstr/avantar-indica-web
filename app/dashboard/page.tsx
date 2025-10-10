@@ -1,54 +1,96 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { BottomNav } from "@/components/bottom-nav"
-import { DesktopSidebar } from "@/components/desktop-sidebar"
-import { PageContainer, PageBackground } from "@/components/page-container"
-import { StatsCard } from "@/components/stats-card"
-import { IndicarModal } from "@/components/indicar-modal"
-import { BellRing, Shield, TrendingUp, Users, DollarSign, Target, Sliders, X } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { BottomNav } from "@/components/bottom-nav";
+import { DesktopSidebar } from "@/components/desktop-sidebar";
+import { PageContainer, PageBackground } from "@/components/page-container";
+import { StatsCard } from "@/components/stats-card";
+import { IndicarModal } from "@/components/indicar-modal";
+import {
+  BellRing,
+  Shield,
+  TrendingUp,
+  Users,
+  DollarSign,
+  Target,
+  Sliders,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import { useAuth } from "@/context/Auth";
+import { AlertModal } from "@/components/alert-modal";
+import { getAllCardsData } from "@/services/dashboard/cards";
 
 interface User {
-  nome: string
-  telefone: string
-  email: string
-  chavePix: string
+  nome: string;
+  telefone: string;
+  email: string;
+  chavePix: string;
 }
 
 export default function DashboardPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [isIndicarModalOpen, setIsIndicarModalOpen] = useState(false)
-  const [showFilter, setShowFilter] = useState(false)
+  const router = useRouter();
+  const { userData } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
+  const [isIndicarModalOpen, setIsIndicarModalOpen] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [cardsData, setCardsData] = useState<any[]>([]);
+
+  // Pegando os dados dos cards
+  useEffect(() => {
+    if (!userData?.uid) return;
+    const fetchData = async () => {
+      const data = await getAllCardsData(userData?.uid);
+      setCardsData(data as any[]);
+    };
+    fetchData();
+  }, [userData?.uid]);
+
+  const handleIndicarClick = () => {
+    if (userData?.rule === "nao_definida") {
+      setShowAlertModal(true);
+      return;
+    }
+    setIsIndicarModalOpen(true);
+  };
+
+  const handleIndicarMultiplosClick = (e: React.MouseEvent) => {
+    if (userData?.rule === "nao_definida") {
+      e.preventDefault();
+      setShowAlertModal(true);
+      return;
+    }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("avantar_token")
+    const token = localStorage.getItem("avantar_token");
     if (!token) {
-      router.push("/login")
-      return
+      router.push("/login");
+      return;
     }
 
-    const userData = localStorage.getItem("avantar_user")
+    const userData = localStorage.getItem("avantar_user");
     if (userData) {
-      setUser(JSON.parse(userData))
+      setUser(JSON.parse(userData));
     }
-  }, [router])
+  }, [router]);
 
   if (!user) {
     return (
       <div className="min-h-screen bg-white dark:bg-[#190d26] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-primary-purple dark:text-white mt-4">Carregando...</p>
+          <p className="text-primary-purple dark:text-white mt-4">
+            Carregando...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
-  const firstName = user.nome.split(" ")[0]
+  const firstName = user.nome.split(" ")[0];
 
   return (
     <>
@@ -84,10 +126,16 @@ export default function DashboardPage() {
                   </button>
                   <div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-lg font-medium text-blue">Olá,</span>
-                      <span className="text-lg font-medium text-white">{firstName}</span>
+                      <span className="text-lg font-medium text-blue">
+                        Olá,
+                      </span>
+                      <span className="text-lg font-medium text-white">
+                        {firstName}
+                      </span>
                     </div>
-                    <p className="text-sm text-white">Seja bem-vindo de volta!</p>
+                    <p className="text-sm text-white">
+                      Seja bem-vindo de volta!
+                    </p>
                   </div>
                 </div>
                 <button className="mr-4">
@@ -100,29 +148,36 @@ export default function DashboardPage() {
             <div className="px-6">
               <div className="flex gap-3 h-20">
                 <button
-                  onClick={() => setIsIndicarModalOpen(true)}
+                  onClick={handleIndicarClick}
                   className="flex-1 bg-transparent border-[1.5px] border-blue rounded-lg flex items-center justify-center gap-1 hover:bg-blue/10 transition-colors"
                 >
-                  <img 
-                    src="/indicar_icon.svg" 
-                    alt="Indicar" 
+                  <img
+                    src="/indicar_icon.svg"
+                    alt="Indicar"
                     className="w-6 h-6"
                   />
-                  <span className="text-white font-normal text-lg ml-1">INDICAR</span>
+                  <span className="text-white font-normal text-lg ml-1">
+                    INDICAR
+                  </span>
                 </button>
 
                 <Link
                   href="/indicar-multiplos"
+                  onClick={handleIndicarMultiplosClick}
                   className="flex-1 bg-transparent border-[1.5px] border-blue rounded-lg flex items-center justify-center gap-0.5 hover:bg-blue/10 transition-colors"
                 >
-                  <img 
-                    src="/indicar_em_massa_icon_blue.svg" 
-                    alt="Indicar Múltiplos" 
+                  <img
+                    src="/indicar_em_massa_icon_blue.svg"
+                    alt="Indicar Múltiplos"
                     className="w-6 h-6"
                   />
                   <div className="flex flex-col items-start ml-0.5">
-                    <span className="text-white font-normal text-lg leading-tight">INDICAR</span>
-                    <span className="text-white font-normal text-sm leading-tight ml-1">MÚLTIPLOS</span>
+                    <span className="text-white font-normal text-lg leading-tight">
+                      INDICAR
+                    </span>
+                    <span className="text-white font-normal text-sm leading-tight ml-1">
+                      MÚLTIPLOS
+                    </span>
                   </div>
                 </Link>
               </div>
@@ -142,8 +197,10 @@ export default function DashboardPage() {
             <div className="px-6 mt-5">
               <div className="bg-white rounded-2xl pt-4 h-64">
                 <div className="flex items-center justify-between px-6">
-                  <h2 className="text-lg font-bold text-primary-purple">Indicar</h2>
-                  <button 
+                  <h2 className="text-lg font-bold text-primary-purple">
+                    Indicar
+                  </h2>
+                  <button
                     onClick={() => setShowFilter(!showFilter)}
                     className="w-10 h-10 rounded-lg bg-primary-purple flex items-center justify-center hover:bg-primary-purple/90 transition-colors"
                   >
@@ -166,7 +223,8 @@ export default function DashboardPage() {
                       Nenhum convite encontrado
                     </h3>
                     <p className="text-gray-600 text-sm max-w-md px-4">
-                      Você ainda não possui convites registrados. Quando você convidar alguém, elas aparecerão aqui!
+                      Você ainda não possui convites registrados. Quando você
+                      convidar alguém, elas aparecerão aqui!
                     </p>
                   </div>
                 </div>
@@ -189,22 +247,30 @@ export default function DashboardPage() {
         <div className="hidden lg:block relative z-10">
           {/* Stats Cards - Desktop */}
           <div className="grid grid-cols-4 gap-4 px-8 py-4">
-            <StatsCard title="Total de Indicações" value="0" icon={Users} color="cyan" />
             <StatsCard
-              title="Indicações Fechadas"
-              value="0"
+              title="Total de Indicações (Mês)"
+              value={cardsData[0] || 0}
+              icon={Users}
+              color="cyan"
+            />
+            <StatsCard
+              title="Indicações Fechadas (Mês)"
+              value={cardsData[1] || 0}
               icon={Target}
-              trend={{ value: "0%", isPositive: true }}
               color="purple"
             />
             <StatsCard
-              title="Comissão Total"
-              value="R$ 0,00"
+              title="Comissão Total (Mês)"
+              value={cardsData[2] || "R$ 0,00"}
               icon={DollarSign}
-              trend={{ value: "R$ 0", isPositive: true }}
               color="orange"
             />
-            <StatsCard title="Taxa de Conversão" value="0%" icon={TrendingUp} color="pink" />
+            <StatsCard
+              title="Taxa de Conversão (Mês)"
+              value={cardsData[3] || "0,00%"}
+              icon={TrendingUp}
+              color="pink"
+            />
           </div>
 
           {/* Main Content Area */}
@@ -216,35 +282,38 @@ export default function DashboardPage() {
                 <div className="px-0">
                   <div className="grid grid-cols-3 gap-3">
                     <button
-                      onClick={() => setIsIndicarModalOpen(true)}
+                      onClick={handleIndicarClick}
                       className="cursor-pointer bg-gradient-to-br from-[#29F3DF]/20 to-[#29F3DF]/5 border-2 border-[#29F3DF] rounded-xl p-6 hover:from-[#29F3DF]/30 hover:to-[#29F3DF]/10 transition-all flex flex-col items-center justify-center gap-3 group"
                     >
                       <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-[#29F3DF]/20 group-hover:bg-[#29F3DF]/30 transition-colors">
-                        <img 
-                          src="/indicar_icon.svg" 
-                          alt="Indicar" 
+                        <img
+                          src="/indicar_icon.svg"
+                          alt="Indicar"
                           className="w-7 h-7"
                         />
                       </div>
-                      <h3 className="text-white font-bold text-base">INDICAR</h3>
+                      <h3 className="text-black dark:text-white font-bold text-base">
+                        INDICAR
+                      </h3>
                     </button>
 
                     <Link
                       href="/indicar-multiplos"
+                      onClick={handleIndicarMultiplosClick}
                       className="bg-gradient-to-br from-[#C352F2]/20 to-[#C352F2]/5 border-2 border-[#C352F2] rounded-xl p-6 hover:from-[#C352F2]/30 hover:to-[#C352F2]/10 transition-all flex flex-col items-center justify-center gap-3 group"
                     >
                       <div className="w-14 h-14 rounded-xl bg-[#C352F2]/20 group-hover:bg-[#C352F2]/30 transition-colors flex items-center justify-center">
-                        <img 
-                          src="/indicar_em_massa_icon.svg" 
-                          alt="Indicar em Massa" 
-                          className="w-7 h-7"
+                        <img
+                          src="/indicar_em_massa_icon.svg"
+                          alt="Indicar em Massa"
+                          className="w-12 h-12"
                         />
                       </div>
-                      <h3 className="text-white font-bold text-base text-center">
+                      <h3 className="text-black dark:text-white font-bold text-base text-center">
                         INDICAR MÚLTIPLOS
                       </h3>
                     </Link>
-                    
+
                     {/* Botão REGRAS na mesma linha no desktop */}
                     <Link
                       href="/regras"
@@ -253,7 +322,9 @@ export default function DashboardPage() {
                       <div className="w-14 h-14 rounded-xl bg-[#F28907]/20 group-hover:bg-[#F28907]/30 transition-colors flex items-center justify-center">
                         <Shield className="w-7 h-7 text-[#E06400]" />
                       </div>
-                      <h3 className="text-white font-bold text-base">REGRAS</h3>
+                      <h3 className="text-black dark:text-white font-bold text-base">
+                        REGRAS
+                      </h3>
                     </Link>
                   </div>
                 </div>
@@ -262,9 +333,16 @@ export default function DashboardPage() {
                 <div className="mx-0">
                   <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm min-h-[350px] flex flex-col">
                     <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-white dark:text-white">Indicações</h2>
+                      <h2 className="text-xl font-bold text-black dark:text-white">
+                        Indicações
+                      </h2>
                       <button className="w-9 h-9 rounded-lg bg-[#4A04A5] flex items-center justify-center hover:bg-[#4A04A5]/90 transition-colors">
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -280,11 +358,12 @@ export default function DashboardPage() {
                       <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
                         <Shield className="w-10 h-10 text-[#C352F2]" />
                       </div>
-                      <h3 className="text-lg font-bold text-white dark:text-white mb-2">
+                      <h3 className="text-lg font-bold text-black dark:text-white mb-2">
                         Nenhuma indicação encontrada
                       </h3>
-                      <p className="text-white dark:text-gray-300 text-sm max-w-md">
-                        Você ainda não possui indicações registradas. Quando você indicar alguém, elas aparecerão aqui!
+                      <p className="text-black dark:text-gray text-sm max-w-md">
+                        Você ainda não possui indicações registradas. Quando
+                        você indicar alguém, elas aparecerão aqui!
                       </p>
                     </div>
                   </div>
@@ -295,11 +374,17 @@ export default function DashboardPage() {
               <div className="col-span-4 space-y-4">
                 {/* Quick Stats */}
                 <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-white dark:text-white mb-4">Desempenho do Mês</h3>
+                  <h3 className="text-base font-bold text-black dark:text-white mb-4">
+                    Desempenho do Mês
+                  </h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-white dark:text-gray-300 text-xs">Meta de Indicações</span>
-                      <span className="font-bold text-white dark:text-blue text-sm">0/10</span>
+                      <span className="text-black dark:text-gray text-xs">
+                        Meta de Indicações
+                      </span>
+                      <span className="font-bold text-blue dark:text-blue text-sm">
+                        0/10
+                      </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                       <div
@@ -309,20 +394,30 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-600">
-                      <span className="text-white dark:text-gray-300 text-xs">Comissão Prevista</span>
-                      <span className="font-bold text-orange dark:text-orange text-sm">R$ 0,00</span>
+                      <span className="text-black dark:text-gray text-xs">
+                        Comissão Prevista
+                      </span>
+                      <span className="font-bold text-orange dark:text-orange text-sm">
+                        R$ 0,00
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-white dark:text-gray-300 text-xs">Próximo Pagamento</span>
-                      <span className="font-bold text-white dark:text-blue text-sm">--/--/----</span>
+                      <span className="text-black dark:text-gray text-xs">
+                        Próximo Pagamento
+                      </span>
+                      <span className="font-bold text-black dark:text-blue text-sm">
+                        --/--/----
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Actions */}
                 <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-white dark:text-white mb-4">Ações Rápidas</h3>
+                  <h3 className="text-base font-bold text-black dark:text-white mb-4">
+                    Ações Rápidas
+                  </h3>
                   <div className="space-y-2">
                     <Link
                       href="/status"
@@ -331,7 +426,9 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#C352F2]/20 flex items-center justify-center group-hover:bg-[#C352F2]/30 transition-colors">
                         <Target className="w-4 h-4 text-[#C352F2]" />
                       </div>
-                      <span className="text-sm font-medium text-white dark:text-white">Status das Propostas</span>
+                      <span className="text-sm font-medium text-black dark:text-white">
+                        Status das Propostas
+                      </span>
                     </Link>
 
                     <Link
@@ -341,7 +438,9 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#29F3DF]/20 flex items-center justify-center group-hover:bg-[#29F3DF]/30 transition-colors">
                         <DollarSign className="w-4 h-4 text-[#29F3DF]" />
                       </div>
-                      <span className="text-sm font-medium text-white dark:text-white">Minha Carteira</span>
+                      <span className="text-sm font-medium text-black dark:text-white">
+                        Minha Carteira
+                      </span>
                     </Link>
 
                     <Link
@@ -351,7 +450,9 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#F28907]/20 flex items-center justify-center group-hover:bg-[#F28907]/30 transition-colors">
                         <Users className="w-4 h-4 text-[#F28907]" />
                       </div>
-                      <span className="text-sm font-medium text-white dark:text-white">Vendedores</span>
+                      <span className="text-sm font-medium text-black dark:text-white">
+                        Vendedores
+                      </span>
                     </Link>
                   </div>
                 </div>
@@ -360,14 +461,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <BottomNav onIndicarClick={() => setIsIndicarModalOpen(true)} />
+        <BottomNav onIndicarClick={handleIndicarClick} />
       </PageContainer>
 
       {/* Indicar Modal */}
-      <IndicarModal 
-        isOpen={isIndicarModalOpen} 
-        onClose={() => setIsIndicarModalOpen(false)} 
+      <IndicarModal
+        isOpen={isIndicarModalOpen}
+        onClose={() => setIsIndicarModalOpen(false)}
+      />
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        title="Cadastro Pendente"
+        message="Seu cadastro ainda não foi aprovado pela unidade. Aguarde a aprovação para poder fazer indicações."
       />
     </>
-  )
+  );
 }

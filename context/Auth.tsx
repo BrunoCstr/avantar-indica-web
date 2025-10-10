@@ -14,9 +14,10 @@ import {
 import { auth } from "../lib/firebaseConfig";
 import { db } from "../lib/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { uiStorage } from "@/utils/uiStorage";
+import { getDefaultProfilePicture } from "@/utils/getDefaultProfilePicture";
 
 interface UserData {
   displayName: string;
@@ -48,7 +49,7 @@ interface AuthContextData {
       | "sub_indicador"
       | "admin_franqueadora"
       | "admin_unidade"
-      | "nao_definido"
+      | "nao_definida"
   ) => Promise<string | undefined>;
   signUp: (
     fullName: string,
@@ -212,7 +213,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       | "sub_indicador"
       | "admin_franqueadora"
       | "admin_unidade"
-      | "nao_definido"
+      | "nao_definida"
   ) {
     try {
       setIsLoadingLogin(true);
@@ -234,6 +235,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         "sub_indicador",
         "admin_franqueadora",
         "admin_unidade",
+        "nao_definida",
       ];
       if (!allowedRoles.includes(role)) {
         await signOut(auth);
@@ -425,18 +427,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         displayName: fullName,
       });
 
+      const profilePictureUrl = await getDefaultProfilePicture();
+      const phoneCleaned = phone.replace(/\D/g, '') || "";
+
       // Criar documento do usuário no Firestore
       await setDoc(doc(db, "users", user.uid), {
-        displayName: fullName,
-        email: email,
-        phone: phone || "",
-        affiliated_to: affiliated_to,
-        unitName: unitName,
-        unitId: affiliated_to,
-        rule: "cliente_indicador",
-        profilePicture: "",
-        createdAt: new Date().toISOString(),
-        isFirstLogin: true,
+        fullName,
+          email,
+          affiliated_to,
+          unitId: affiliated_to,
+          registration_status: false,
+          createdAt: serverTimestamp(),
+          uid: user.uid,
+          isFirstLogin: true,
+          fcmToken: null,
+          profilePicture: profilePictureUrl,
+          phone: phoneCleaned || "",
+          pixKey: null,
+          unitName: unitName,
+          disabled: false,
+          notificationsPreferences: {
+            campaigns: true,
+            withdraw: true,
+            status: true,
+            email: true,
+            whatsapp: true,
+            newIndications: true,
+            newWithdraw: true,
+          },
+          balance: 0,
         uiSettings: {
           sidebarCollapsed: false,
           theme: "light",
@@ -448,9 +467,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         url: "https://indica.avantar.com.br/login",
         handleCodeInApp: true,
       });
-
-      // Fazer logout após o cadastro
-      await signOut(auth);
 
       return null; // Sucesso
     } catch (err: any) {

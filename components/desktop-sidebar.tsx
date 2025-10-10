@@ -24,19 +24,17 @@ import {
 import { useAuth } from "@/context/Auth";
 import { useUISettings } from "@/hooks/useUISettings";
 import { Wallet, ClipboardList, Bell, User, UserPlus } from "lucide-react";
+import { AlertModal } from "@/components/alert-modal";
 
-interface SidebarProps {
-  userType?: "parceiro_indicador" | "cliente_indicador";
-}
-
-export function DesktopSidebar({
-  userType = "parceiro_indicador",
-}: SidebarProps) {
+export function DesktopSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const { signOut } = useAuth();
+  const { signOut, userData } = useAuth();
   const { sidebarCollapsed, updateSidebarCollapsed } = useUISettings();
+  const [showAlertModal, setShowAlertModal] = useState(false);
+
+  const userType = userData?.rule;
 
   useEffect(() => {
     setIsMounted(true);
@@ -63,7 +61,7 @@ export function DesktopSidebar({
     { href: "/configuracoes", icon: Settings, title: "Configurações" },
   ];
 
-  const routes = userType === "parceiro_indicador" ? parceiro_indicador_routes : cliente_indicador_routes;
+  const routes = userType === "cliente_indicador" || userType === "nao_definida" ? cliente_indicador_routes : parceiro_indicador_routes;
 
 
   if (!isMounted) {
@@ -71,6 +69,11 @@ export function DesktopSidebar({
   }
 
   const handleNavigation = (href: string) => {
+    // Verifica se é a rota de indicar-multiplos e se o usuário não tem permissão
+    if (href === "/indicar-multiplos" && userData?.rule === "nao_definida") {
+      setShowAlertModal(true);
+      return;
+    }
     router.push(href);
   };
 
@@ -268,6 +271,14 @@ export function DesktopSidebar({
           </Button>
         </div>
       </aside>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        title="Cadastro Pendente"
+        message="Seu cadastro ainda não foi aprovado pela unidade. Aguarde a aprovação para poder fazer indicações."
+      />
     </>
   );
 }

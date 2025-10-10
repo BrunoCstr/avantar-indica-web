@@ -159,7 +159,7 @@ export default function CadastroPage() {
       } else {
         // Se não há erro, mostrar mensagem de sucesso
         setModalMessage({
-          title: "Quase lá!",
+          title: "Verificação de e-mail",
           description: "Verifique seu e-mail para validar seu cadastro!",
         });
         setIsModalVisible(true);
@@ -389,7 +389,7 @@ export default function CadastroPage() {
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-4 px-6 rounded-2xl text-lg transition-all duration-700"
+              className="w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-4 px-6 rounded-2xl text-lg transition-all duration-700 flex justify-center items-center"
             >
               {isLoading ? <Spinner size={32}/> : "CADASTRAR"}
             </motion.button>

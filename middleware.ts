@@ -9,11 +9,25 @@ const publicRoutes = [
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/"; // Redireciona para página de boas-vindas
 const REDIRECT_WHEN_AUTHENTICATED_ROUTE = "/dashboard";
+const UNAUTHORIZED_ROUTE = "/dashboard"; // Redireciona quando não tem permissão
+
+// Roles restritas por rota
+const restrictedRoutes = [
+  {
+    path: "/vendedores",
+    blockedRoles: ["cliente_indicador", "sub_indicador", "nao_definida"],
+  },
+  {
+    path: "/indicar-multiplos",
+    blockedRoles: ["nao_definida"],
+  },
+] as const;
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const publicRoute = publicRoutes.find((route) => path === route.path);
   const userToken = request.cookies.get("authToken")?.value;
+  const userRole = request.cookies.get("role")?.value;
 
   // Se não há token e é uma rota pública, permite acesso
   if (!userToken && publicRoute) {
@@ -56,6 +70,20 @@ export async function middleware(request: NextRequest) {
         } else if (publicRoute.whenAuthenticated === "allow") {
           // Permite acesso mesmo autenticado (ex: página de boas-vindas)
           return NextResponse.next();
+        }
+      }
+
+      // Verifica restrições de role para rotas específicas
+      const restrictedRoute = restrictedRoutes.find(
+        (route) => path.startsWith(route.path)
+      );
+      
+      if (restrictedRoute && userRole) {
+        if (restrictedRoute.blockedRoles.includes(userRole as any)) {
+          // Usuário não tem permissão para acessar esta rota
+          return NextResponse.redirect(
+            new URL(UNAUTHORIZED_ROUTE, request.url)
+          );
         }
       }
 

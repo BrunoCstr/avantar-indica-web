@@ -2,13 +2,15 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { ChevronDown, Users, Send, UserPlus, Trash2, CheckCircle } from "lucide-react"
+import { useAuth } from "@/context/Auth"
+import { AlertModal } from "@/components/alert-modal"
 
 interface Indicacao {
   nome: string
@@ -20,6 +22,7 @@ interface Indicacao {
 
 export default function IndicarMultiplosPage() {
   const router = useRouter()
+  const { userData } = useAuth()
   const [indicacoes, setIndicacoes] = useState<Indicacao[]>([])
   const [formData, setFormData] = useState({
     nome: "",
@@ -29,11 +32,30 @@ export default function IndicarMultiplosPage() {
     observacoes: "",
   })
   const [consentimento, setConsentimento] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+  const [alertTitle, setAlertTitle] = useState("Atenção")
+
+  // Verifica se o usuário tem permissão para acessar esta página
+  useEffect(() => {
+    if (userData && userData.rule === "nao_definida") {
+      setAlertTitle("Cadastro Pendente")
+      setAlertMessage("Seu cadastro ainda não foi aprovado pela unidade. Aguarde a aprovação para poder fazer indicações.")
+      setShowAlertModal(true)
+      
+      // Redireciona após fechar o modal
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 500)
+    }
+  }, [userData, router])
 
   const handleAddIndicacao = (e: React.FormEvent) => {
     e.preventDefault()
     if (!consentimento) {
-      alert("Você precisa confirmar que obteve consentimento do indicado")
+      setAlertTitle("Atenção")
+      setAlertMessage("Você precisa confirmar que obteve consentimento do indicado")
+      setShowAlertModal(true)
       return
     }
     setIndicacoes([...indicacoes, formData])
@@ -49,7 +71,9 @@ export default function IndicarMultiplosPage() {
 
   const handleEnviarTodas = () => {
     if (indicacoes.length === 0) {
-      alert("Adicione pelo menos uma indicação")
+      setAlertTitle("Atenção")
+      setAlertMessage("Adicione pelo menos uma indicação")
+      setShowAlertModal(true)
       return
     }
     // Salva todas as indicações
@@ -61,15 +85,22 @@ export default function IndicarMultiplosPage() {
       data: new Date().toISOString(),
     }))
     localStorage.setItem("avantar_indicacoes", JSON.stringify([...indicacoesExistentes, ...novasIndicacoes]))
-    alert(`${indicacoes.length} indicações enviadas com sucesso!`)
-    router.push("/dashboard")
+    
+    setAlertTitle("Sucesso!")
+    setAlertMessage(`${indicacoes.length} ${indicacoes.length === 1 ? 'indicação enviada' : 'indicações enviadas'} com sucesso!`)
+    setShowAlertModal(true)
+    
+    // Redireciona após fechar o modal
+    setTimeout(() => {
+      router.push("/dashboard")
+    }, 500)
   }
 
   return (
     <>
       {/* Sidebar apenas para Desktop */}
       <div className="hidden lg:block">
-        <DesktopSidebar />
+      <DesktopSidebar />
       </div>
 
       <PageContainer showHeader={true}>
@@ -201,7 +232,7 @@ export default function IndicarMultiplosPage() {
                     </div>
                     <button
                       onClick={() => setIndicacoes(indicacoes.filter((_, i) => i !== index))}
-                      className="w-10 h-10 rounded-xl bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                      className="w-10 h-10 rounded-xl bg-red-500 hover:bg-red flex items-center justify-center transition-colors"
                     >
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -234,8 +265,8 @@ export default function IndicarMultiplosPage() {
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Indicações Múltiplas</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <h1 className="text-3xl font-bold text-black dark:text-white">Indicações Múltiplas</h1>
+                <p className="text-sm text-black dark:text-gray mt-1">
                   Adicione várias indicações de uma só vez
                 </p>
               </div>
@@ -253,20 +284,20 @@ export default function IndicarMultiplosPage() {
             <div className="grid grid-cols-12 gap-6">
               {/* Formulário - 7 colunas */}
               <div className="col-span-7">
-                <div className="bg-white dark:bg-[#190d26] border border-gray-200 dark:border-[#4A04A5]/30 rounded-xl p-6 shadow-sm">
+                <div className="bg-white dark:bg-[#190d26] border border-gray dark:border-[#4A04A5]/30 rounded-xl p-6 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#29F3DF]/20 to-[#29F3DF]/5 flex items-center justify-center">
                       <UserPlus className="w-6 h-6 text-[#29F3DF]" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nova Indicação</h2>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Preencha os dados abaixo</p>
+                      <h2 className="text-xl font-bold text-black dark:text-white">Nova Indicação</h2>
+                      <p className="text-sm text-black dark:text-gray">Preencha os dados abaixo</p>
                     </div>
                   </div>
 
                   <form onSubmit={handleAddIndicacao} className="space-y-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-black dark:text-gray mb-2">
                         Nome Completo
                       </label>
                       <input
@@ -274,13 +305,13 @@ export default function IndicarMultiplosPage() {
                         placeholder="Digite o nome completo"
                         value={formData.nome}
                         onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                        className="w-full border-2 border-gray-300 dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+                        className="w-full border-2 border-gray dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-black dark:text-gray mb-2">
                         E-mail
                       </label>
                       <input
@@ -288,13 +319,13 @@ export default function IndicarMultiplosPage() {
                         placeholder="email@exemplo.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full border-2 border-gray-300 dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+                        className="w-full border-2 border-gray dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-black dark:text-gray mb-2">
                         Telefone
                       </label>
                       <input
@@ -302,20 +333,20 @@ export default function IndicarMultiplosPage() {
                         placeholder="(00) 00000-0000"
                         value={formData.telefone}
                         onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                        className="w-full border-2 border-gray-300 dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
+                        className="w-full border-2 border-gray dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-black dark:text-gray mb-2">
                         Produto
                       </label>
                       <div className="relative">
                         <select
                           value={formData.produto}
                           onChange={(e) => setFormData({ ...formData, produto: e.target.value })}
-                          className="w-full border-2 border-gray-300 dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 appearance-none"
+                          className="w-full border-2 border-gray dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-black dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 appearance-none"
                           required
                         >
                           <option value="" disabled>
@@ -328,19 +359,19 @@ export default function IndicarMultiplosPage() {
                           <option value="consorcio-imovel">Consórcio Imóvel</option>
                           <option value="plano-saude">Plano de Saúde</option>
                         </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5 pointer-events-none" />
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-500 w-5 h-5 pointer-events-none" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-black dark:text-gray mb-2">
                         Observações (Opcional)
                       </label>
                       <textarea
                         placeholder="Adicione informações relevantes..."
                         value={formData.observacoes}
                         onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                        className="w-full border-2 border-gray-300 dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 min-h-[100px] resize-none"
+                        className="w-full border-2 border-gray dark:border-[#4A04A5] bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 min-h-[100px] resize-none"
                       />
                     </div>
 
@@ -352,7 +383,7 @@ export default function IndicarMultiplosPage() {
                         onChange={(e) => setConsentimento(e.target.checked)}
                         className="mt-1 w-5 h-5 rounded border-2 border-[#29F3DF] bg-transparent checked:bg-[#29F3DF] checked:border-[#29F3DF] cursor-pointer"
                       />
-                      <label htmlFor="consentimento-multiplos-desktop" className="text-gray-700 dark:text-gray-300 text-sm cursor-pointer leading-relaxed">
+                      <label htmlFor="consentimento-multiplos-desktop" className="text-black dark:text-gray text-sm cursor-pointer leading-relaxed">
                         Confirmo que obtive consentimento do indicado para enviar seus dados.
                       </label>
                     </div>
@@ -370,15 +401,15 @@ export default function IndicarMultiplosPage() {
 
               {/* Lista de Indicações - 5 colunas */}
               <div className="col-span-5">
-                <div className="bg-white dark:bg-[#190d26] border border-gray-200 dark:border-[#4A04A5]/30 rounded-xl p-6 shadow-sm">
+                <div className="bg-white dark:bg-[#190d26] border border-gray dark:border-[#4A04A5]/30 rounded-xl p-6 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#C352F2]/20 to-[#C352F2]/5 flex items-center justify-center">
                         <Users className="w-5 h-5 text-[#C352F2]" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Lista de Indicações</h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <h3 className="text-lg font-bold text-black dark:text-white">Lista de Indicações</h3>
+                        <p className="text-xs text-black dark:text-gray">
                           {indicacoes.length} {indicacoes.length === 1 ? "indicação" : "indicações"}
                         </p>
                       </div>
@@ -390,10 +421,10 @@ export default function IndicarMultiplosPage() {
                       <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#C352F2]/10 to-[#C352F2]/5 flex items-center justify-center">
                         <Users className="w-8 h-8 text-[#C352F2]" />
                       </div>
-                      <h4 className="text-base font-bold text-gray-900 dark:text-white mb-2">
+                      <h4 className="text-base font-bold text-black dark:text-white mb-2">
                         Nenhuma indicação adicionada
                       </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-black dark:text-gray">
                         Preencha o formulário ao lado para adicionar indicações
                       </p>
                     </div>
@@ -407,15 +438,15 @@ export default function IndicarMultiplosPage() {
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
                               <h4 className="font-bold text-[#29F3DF] text-base mb-1 truncate">{ind.nome}</h4>
-                              <p className="text-sm text-gray-700 dark:text-gray-300 truncate">{ind.email}</p>
-                              <p className="text-sm text-gray-700 dark:text-gray-300">{ind.telefone}</p>
+                              <p className="text-sm text-black dark:text-gray truncate">{ind.email}</p>
+                              <p className="text-sm text-black dark:text-gray">{ind.telefone}</p>
                               <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-[#C352F2]/20 border border-[#C352F2]/30">
                                 <p className="text-xs font-medium text-[#C352F2]">{ind.produto}</p>
                               </div>
                             </div>
                             <button
                               onClick={() => setIndicacoes(indicacoes.filter((_, i) => i !== index))}
-                              className="ml-3 w-9 h-9 rounded-lg bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors flex-shrink-0"
+                              className="ml-3 w-9 h-9 rounded-lg bg-red-500 hover:bg-red flex items-center justify-center transition-colors flex-shrink-0"
                             >
                               <Trash2 className="w-4 h-4 text-white" />
                             </button>
@@ -426,7 +457,7 @@ export default function IndicarMultiplosPage() {
                   )}
 
                   {indicacoes.length > 0 && (
-                    <div className="mt-6 pt-6 border-t border-gray-200 dark:border-[#4A04A5]/30">
+                    <div className="mt-6 pt-6 border-t border-gray dark:border-[#4A04A5]/30">
                       <button
                         onClick={handleEnviarTodas}
                         className="w-full bg-gradient-to-r from-[#29F3DF] to-[#29F3DF]/80 hover:from-[#29F3DF]/90 hover:to-[#29F3DF]/70 text-[#170138] font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"
@@ -442,6 +473,14 @@ export default function IndicarMultiplosPage() {
           </div>
         </div>
       </PageContainer>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        title={alertTitle}
+        message={alertMessage}
+      />
     </>
   )
 }
