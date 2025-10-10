@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/Auth";
 import { AlertModal } from "@/components/alert-modal";
 import { getAllCardsData } from "@/services/dashboard/cards";
+import { fetchMonthPerformanceData, PerformanceData } from "@/services/dashboard/performance-of-month";
 
 interface User {
   nome: string;
@@ -38,6 +39,8 @@ export default function DashboardPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [cardsData, setCardsData] = useState<any[]>([]);
+  const [performanceData, setPerformanceData] = useState<PerformanceData | null>(null);
+  const [isLoadingPerformance, setIsLoadingPerformance] = useState(true);
 
   // Pegando os dados dos cards
   useEffect(() => {
@@ -48,6 +51,23 @@ export default function DashboardPage() {
       console.log(data);
     };
     fetchData();
+  }, [userData?.uid]);
+
+  // Pegando os dados de performance do mês
+  useEffect(() => {
+    if (!userData?.uid) return;
+    const fetchPerformance = async () => {
+      try {
+        setIsLoadingPerformance(true);
+        const data = await fetchMonthPerformanceData(userData.uid);
+        setPerformanceData(data);
+      } catch (error) {
+        console.error("Erro ao buscar dados de performance:", error);
+      } finally {
+        setIsLoadingPerformance(false);
+      }
+    };
+    fetchPerformance();
   }, [userData?.uid]);
 
   const handleIndicarClick = () => {
@@ -341,45 +361,72 @@ export default function DashboardPage() {
 
               {/* Sidebar - 4 columns on desktop */}
               <div className="col-span-4 space-y-4">
-                {/* Quick Stats */}
+                {/* Quick Stats - Desempenho do Mês */}
                 <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
                   <h3 className="text-base font-bold text-black dark:text-white mb-4">
                     Desempenho do Mês
                   </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-black dark:text-gray text-xs">
-                        Meta de Indicações
-                      </span>
-                      <span className="font-bold text-blue dark:text-blue text-sm">
-                        0/10
-                      </span>
+                  
+                  {isLoadingPerformance ? (
+                    <div className="flex justify-center items-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4A04A5]"></div>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-[#29F3DF] to-[#C352F2] h-2 rounded-full transition-all"
-                        style={{ width: "0%" }}
-                      />
-                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {/* Indicações Pendentes */}
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[#4A04A5]/5 to-[#4A04A5]/10 rounded-lg">
+                        <span className="text-black dark:text-gray text-xs font-medium">
+                          Indicações Pendentes
+                        </span>
+                        <span className="font-bold text-[#4A04A5] dark:text-[#C352F2] text-sm">
+                          {performanceData?.pendingIndications || 0}
+                        </span>
+                      </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-600">
-                      <span className="text-black dark:text-gray text-xs">
-                        Comissão Prevista
-                      </span>
-                      <span className="font-bold text-orange dark:text-orange text-sm">
-                        R$ 0,00
-                      </span>
-                    </div>
+                      {/* Oportunidades em Andamento */}
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[#29F3DF]/5 to-[#29F3DF]/10 rounded-lg">
+                        <span className="text-black dark:text-gray text-xs font-medium">
+                          Oportunidades em Andamento
+                        </span>
+                        <span className="font-bold text-[#29F3DF] text-sm">
+                          {performanceData?.ongoingOpportunities || 0}
+                        </span>
+                      </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-black dark:text-gray text-xs">
-                        Próximo Pagamento
-                      </span>
-                      <span className="font-bold text-black dark:text-blue text-sm">
-                        --/--/----
-                      </span>
+                      {/* Oportunidades Fechadas */}
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/5 to-green-500/10 rounded-lg">
+                        <span className="text-black dark:text-gray text-xs font-medium">
+                          Oportunidades Fechadas
+                        </span>
+                        <span className="font-bold text-green-600 dark:text-green-400 text-sm">
+                          {performanceData?.closedOpportunities || 0}
+                        </span>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-gray-200 dark:border-gray-600 my-3"></div>
+
+                      {/* Saques Pendentes */}
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-500/5 to-orange-500/10 rounded-lg">
+                        <span className="text-black dark:text-gray text-xs font-medium">
+                          Saques Pendentes
+                        </span>
+                        <span className="font-bold text-orange-600 dark:text-orange-400 text-sm">
+                          {performanceData?.pendingWithdrawals || 0}
+                        </span>
+                      </div>
+
+                      {/* Saques Pagos */}
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-500/5 to-blue-500/10 rounded-lg">
+                        <span className="text-black dark:text-gray text-xs font-medium">
+                          Saques Pagos
+                        </span>
+                        <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">
+                          {performanceData?.paidWithdrawals || 0}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Quick Actions */}
