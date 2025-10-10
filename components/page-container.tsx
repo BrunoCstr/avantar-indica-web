@@ -60,7 +60,7 @@ export function PageBackground({
     <div
       className={cn(
         "fixed inset-0 transition-all duration-300",
-        "bg-white dark:bg-[#190d26]",
+        "bg-[#fff] dark:bg-[#190d26]",
         sidebarCollapsed ? "lg:left-[80px]" : "lg:left-[280px]",
         className
       )}

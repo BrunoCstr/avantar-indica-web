@@ -51,16 +51,22 @@ export default function StatusPage() {
     <>
       <DesktopSidebar />
 
-      <PageContainer className="bg-gradient-to-b from-[#F6F3FF] to-white pb-24 lg:pb-0">
-        <PageBackground className="bg-white-responsive" />
+      <PageContainer className="pb-24 lg:pb-0">
+        {/* Background - Mobile: bg-white-responsive | Desktop: cor sólida do tema */}
+        <div className="lg:hidden">
+          <PageBackground className="bg-white-responsive" />
+        </div>
+        <div className="hidden lg:block">
+          <PageBackground />
+        </div>
 
         <div className="relative z-10 p-6 lg:px-8 lg:py-6">
-          <div className="mb-6 flex items-center justify-between lg:border-b lg:border-gray-200 lg:pb-6">
+          <div className="mb-6 flex items-center justify-between lg:border-b lg:border-gray-200 dark:lg:border-tertiary-purple lg:pb-6">
             <div className="flex items-center gap-4">
               <div className="lg:hidden">
                 <BackButton bgColor="#4A04A5" />
               </div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-[#4A04A5]">Status das Propostas</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white">Status das Propostas</h1>
             </div>
             <div className="w-12 lg:hidden" />
           </div>
@@ -85,42 +91,42 @@ export default function StatusPage() {
           <div className="grid grid-cols-4 lg:grid-cols-4 gap-2 mb-2">
             <button
               onClick={() => setFiltro("Pendente")}
-              className={`bg-white rounded-2xl p-1 shadow-sm border-2 transition-all hover:shadow-md ${
-                filtro === "Pendente" ? "border-[#F28907]" : "border-transparent"
+              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 shadow-md border-gray transition-all ${
+                filtro === "Pendente" ? "border-[#F28907]" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
-              <div className="text-2xl font-bold text-[#4A04A5] mb-2">{contadores.pendente}</div>
-              <div className="text-xs text-gray-600">Pendente</div>
+              <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.pendente}</div>
+              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Pendente</div>
             </button>
 
             <button
               onClick={() => setFiltro("Em contato")}
-              className={`bg-white rounded-2xl p-1 shadow-sm border-2 transition-all hover:shadow-md ${
-                filtro === "Em contato" ? "border-blue-500" : "border-transparent"
+              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 border-2 transition-all shadow-md ${
+                filtro === "Em contato" ? "border-blue-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
-              <div className="text-2xl font-bold text-[#4A04A5] mb-2">{contadores.emContato}</div>
-              <div className="text-xs text-gray-600">Em contato</div>
+              <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.emContato}</div>
+              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Em contato</div>
             </button>
 
             <button
               onClick={() => setFiltro("Fechados")}
-              className={`bg-white rounded-2xl p-1 shadow-sm border-2 transition-all hover:shadow-md ${
-                filtro === "Fechados" ? "border-green-500" : "border-transparent"
+              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1  border-2 transition-all shadow-md ${
+                filtro === "Fechados" ? "border-green-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
-              <div className="text-2xl font-bold text-[#4A04A5] mb-2">{contadores.fechados}</div>
-              <div className="text-xs text-gray-600">Fechados</div>
+              <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.fechados}</div>
+              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Fechados</div>
             </button>
 
             <button
               onClick={() => setFiltro("Não fechado")}
-              className={`bg-white rounded-2xl p-1 shadow-sm border-2 transition-all hover:shadow-md ${
-                filtro === "Não fechado" ? "border-red-500" : "border-transparent"
+              className={`bg-white dark:bg-[#190d26] rounded-2xl p-1 border-2 transition-all shadow-md ${
+                filtro === "Não fechado" ? "border-red-500" : "border-transparent dark:border-tertiary-purple"
               }`}
             >
-              <div className="text-2xl font-bold text-[#4A04A5] mb-2">{contadores.naoFechado}</div>
-              <div className="text-xs text-gray-600">Não fechado</div>
+              <div className="text-2xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">{contadores.naoFechado}</div>
+              <div className="text-xs text-gray-600 lg:text-black lg:dark:text-gray">Não fechado</div>
             </button>
           </div>
 
@@ -129,8 +135,8 @@ export default function StatusPage() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-[#C352F2]/10 flex items-center justify-center">
                 <Clipboard className="w-10 h-10 text-[#C352F2]" />
               </div>
-              <h3 className="text-xl font-bold text-[#4A04A5] mb-2">Nenhum resultado encontrado</h3>
-              <p className="text-gray-600 text-sm leading-relaxed px-8">
+              <h3 className="text-xl font-bold text-[#4A04A5] lg:text-black lg:dark:text-white mb-2">Nenhum resultado encontrado</h3>
+              <p className="text-gray-600 lg:text-black lg:dark:text-gray text-sm leading-relaxed px-8">
                 Você ainda não possui oportunidades ou indicações registradas. Quando você indicar alguém, elas
                 aparecerão aqui!
               </p>
@@ -140,13 +146,13 @@ export default function StatusPage() {
               {filtro !== "todos" && (
                 <button
                   onClick={() => setFiltro("todos")}
-                  className="text-[#4A04A5] hover:text-[#29F3DF] text-sm font-medium mb-4"
+                  className="text-[#4A04A5] lg:text-black lg:dark:text-white hover:text-[#29F3DF] text-sm font-medium mb-4"
                 >
                   ← Ver todas
                 </button>
               )}
 
-              <div className="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="hidden lg:block bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-2xl shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-[#4A04A5] text-white">
                     <tr>
@@ -161,20 +167,20 @@ export default function StatusPage() {
                     {indicacoesFiltradas.map((ind, index) => (
                       <tr
                         key={ind.id}
-                        className={`border-b border-gray-100 hover:bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}
+                        className={`border-b border-gray-100 dark:border-tertiary-purple hover:bg-gray-50 dark:hover:bg-[#4A04A5]/10 ${index % 2 === 0 ? "bg-white dark:bg-[#190d26]" : "bg-gray-50/50 dark:bg-[#4A04A5]/5"}`}
                       >
                         <td className="py-4 px-6">
-                          <p className="font-bold text-[#4A04A5]">{ind.nome}</p>
+                          <p className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white">{ind.nome}</p>
                         </td>
                         <td className="py-4 px-6">
-                          <p className="text-sm text-gray-600">{ind.email}</p>
-                          <p className="text-sm text-gray-600">{ind.telefone}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray">{ind.email}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray">{ind.telefone}</p>
                         </td>
                         <td className="py-4 px-6">
                           <span className="text-sm text-[#29F3DF] font-medium">{ind.produto}</span>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-600 dark:text-gray">
                             {new Date(ind.data).toLocaleDateString("pt-BR")}
                           </span>
                         </td>
