@@ -74,18 +74,19 @@ export function DesktopSidebar({
 
   return (
     <>
-      {/* Mobile Sidebar */}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="md:hidden fixed top-4 left-4 z-50 rounded-full shadow-md border-0 bg-white/90 backdrop-blur-sm dark:bg-avantar-dark/90"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Abrir menu</span>
-          </Button>
-        </SheetTrigger>
+      {/* Mobile Sidebar - DESABILITADO */}
+      <div className="hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="md:hidden fixed top-4 left-4 z-50 rounded-full shadow-md border-0 bg-white/90 backdrop-blur-sm dark:bg-avantar-dark/90"
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Abrir menu</span>
+            </Button>
+          </SheetTrigger>
         <SheetContent side="left" className="p-0 border-0 shadow-2xl">
           <div className="h-full flex flex-col bg-gradient-to-b from-avantar-primary to-avantar-secondary text-white">
             <div className="p-4 flex items-center justify-between border-b border-white/10">
@@ -139,7 +140,8 @@ export function DesktopSidebar({
             </div>
           </div>
         </SheetContent>
-      </Sheet>
+        </Sheet>
+      </div>
 
       {/* Desktop Sidebar */}
       <aside

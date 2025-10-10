@@ -7,8 +7,9 @@ import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { StatsCard } from "@/components/stats-card"
 import { IndicarModal } from "@/components/indicar-modal"
-import { BellRing, Shield, TrendingUp, Users, DollarSign, Target } from "lucide-react"
+import { BellRing, Shield, TrendingUp, Users, DollarSign, Target, Sliders, X } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface User {
   nome: string
@@ -21,6 +22,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [isIndicarModalOpen, setIsIndicarModalOpen] = useState(false)
+  const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem("avantar_token")
@@ -50,40 +52,143 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DesktopSidebar />
+      {/* Sidebar apenas para Desktop */}
+      <div className="hidden lg:block">
+        <DesktopSidebar />
+      </div>
 
       <PageContainer>
-        {/* Background image */}
-        <PageBackground />
+        {/* Background image - Desktop */}
+        <div className="hidden lg:block">
+          <PageBackground />
+        </div>
 
-        {/* Content */}
-        <div className="relative z-10">
-          {/* Header Mobile - Apenas para mobile */}
-          <div className="lg:hidden p-6 flex items-center justify-between border-b border-gray-200 dark:border-tertiary-purple">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue to-pink p-0.5">
-                <div className="w-full h-full rounded-full bg-primary-purple dark:bg-[#190d26] flex items-center justify-center overflow-hidden">
-                  <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-08%20at%2008.53.18%20(1)-rX4Qs-yLD9hO2Z3nnrE6RlwFyw2MmUebYn8r.jpeg"
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
+        {/* Background image - Mobile com imagem bg_home.png */}
+        <div className="lg:hidden fixed inset-0 z-0">
+          <div className="absolute inset-0 bg-dark-responsive" />
+        </div>
+
+        {/* Content Mobile - Scroll Container */}
+        <div className="lg:hidden relative z-10 overflow-y-auto h-screen pb-24">
+          <div className="flex flex-col min-h-full">
+            {/* Header Mobile - NOVO DESIGN IDENTICO AO REACT NATIVE */}
+            <div className="pt-14 px-6 pb-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <button className="w-16 h-16 rounded-full overflow-hidden border-2 border-transparent hover:border-blue transition-colors">
+                    <img
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-08%20at%2008.53.18%20(1)-rX4Qs-yLD9hO2Z3nnrE6RlwFyw2MmUebYn8r.jpeg"
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-medium text-blue">Olá,</span>
+                      <span className="text-lg font-medium text-white">{firstName}</span>
+                    </div>
+                    <p className="text-sm text-white">Seja bem-vindo de volta!</p>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-primary-purple dark:text-white">
-                  Olá, <span className="text-blue">{firstName}</span>
-                </h1>
-                <p className="text-gray-600 dark:text-white/80 text-sm">Seja bem-vindo de volta!</p>
+                <button className="mr-4">
+                  <BellRing className="w-7 h-7 text-blue" />
+                </button>
               </div>
             </div>
-            <button className="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary-purple/10 dark:hover:bg-blue/10 transition-colors">
-              <BellRing className="w-7 h-7 text-blue" />
-            </button>
-          </div>
 
+            {/* Action Buttons - MOBILE: Dois botões lado a lado */}
+            <div className="px-6">
+              <div className="flex gap-3 h-20">
+                <button
+                  onClick={() => setIsIndicarModalOpen(true)}
+                  className="flex-1 bg-transparent border-[1.5px] border-blue rounded-lg flex items-center justify-center gap-1 hover:bg-blue/10 transition-colors"
+                >
+                  <img 
+                    src="/indicar_icon.svg" 
+                    alt="Indicar" 
+                    className="w-6 h-6"
+                  />
+                  <span className="text-white font-normal text-lg ml-1">INDICAR</span>
+                </button>
+
+                <Link
+                  href="/indicar-multiplos"
+                  className="flex-1 bg-transparent border-[1.5px] border-blue rounded-lg flex items-center justify-center gap-0.5 hover:bg-blue/10 transition-colors"
+                >
+                  <img 
+                    src="/indicar_em_massa_icon_blue.svg" 
+                    alt="Indicar Múltiplos" 
+                    className="w-6 h-6"
+                  />
+                  <div className="flex flex-col items-start ml-0.5">
+                    <span className="text-white font-normal text-lg leading-tight">INDICAR</span>
+                    <span className="text-white font-normal text-sm leading-tight ml-1">MÚLTIPLOS</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Botão REGRAS - MOBILE */}
+            <div className="px-6 mt-5">
+              <Link
+                href="/regras"
+                className="block w-full bg-[#E06400] text-white font-bold py-[1.75rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#F28907]"
+              >
+                REGRAS
+              </Link>
+            </div>
+
+            {/* Indicações Card - MOBILE */}
+            <div className="px-6 mt-5">
+              <div className="bg-white rounded-2xl pt-4 h-64">
+                <div className="flex items-center justify-between px-6">
+                  <h2 className="text-lg font-bold text-primary-purple">Indicar</h2>
+                  <button 
+                    onClick={() => setShowFilter(!showFilter)}
+                    className="w-10 h-10 rounded-lg bg-primary-purple flex items-center justify-center hover:bg-primary-purple/90 transition-colors"
+                  >
+                    {showFilter ? (
+                      <X className="w-5 h-5 text-white" />
+                    ) : (
+                      <Sliders className="w-5 h-5 text-white" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Lista de Convites - Scroll */}
+                <div className="overflow-y-auto h-[calc(100%-3.5rem)] mt-1 px-6 pb-1.5">
+                  {/* Empty State */}
+                  <div className="text-center py-12 flex flex-col items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
+                      <Shield className="w-8 h-8 text-[#C352F2]" />
+                    </div>
+                    <h3 className="text-lg font-bold text-primary-purple mb-2">
+                      Nenhum convite encontrado
+                    </h3>
+                    <p className="text-gray-600 text-sm max-w-md px-4">
+                      Você ainda não possui convites registrados. Quando você convidar alguém, elas aparecerão aqui!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Botão STATUS DAS PROPOSTAS - MOBILE */}
+            <div className="px-6 mt-5 pb-6">
+              <Link
+                href="/status"
+                className="block w-full bg-gradient-to-r from-[#C352F2] to-[#C352F2]/80 text-white font-bold py-[1.75rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#8822ED]"
+              >
+                STATUS DAS PROPOSTAS
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Desktop */}
+        <div className="hidden lg:block relative z-10">
           {/* Stats Cards - Desktop */}
-          <div className="hidden lg:grid lg:grid-cols-4 gap-4 px-8 py-4">
+          <div className="grid grid-cols-4 gap-4 px-8 py-4">
             <StatsCard title="Total de Indicações" value="0" icon={Users} color="cyan" />
             <StatsCard
               title="Indicações Fechadas"
@@ -103,47 +208,47 @@ export default function DashboardPage() {
           </div>
 
           {/* Main Content Area */}
-          <div className="lg:px-8 lg:py-4">
-            <div className="lg:grid lg:grid-cols-12 lg:gap-6">
+          <div className="px-8 py-4">
+            <div className="grid grid-cols-12 gap-6">
               {/* Main content - 8 columns on desktop */}
-              <div className="lg:col-span-8 space-y-4 lg:space-y-4">
-                {/* Action Buttons - Desktop Layout */}
-                <div className="px-6 lg:px-0">
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="col-span-8 space-y-4">
+                {/* Action Buttons - DESKTOP: 3 botões em linha */}
+                <div className="px-0">
+                  <div className="grid grid-cols-3 gap-3">
                     <button
                       onClick={() => setIsIndicarModalOpen(true)}
-                      className="cursor-pointer bg-gradient-to-br from-[#29F3DF]/20 to-[#29F3DF]/5 border-2 border-[#29F3DF] rounded-xl p-4 lg:p-6 hover:from-[#29F3DF]/30 hover:to-[#29F3DF]/10 transition-all flex flex-col items-center justify-center gap-2 lg:gap-3 group"
+                      className="cursor-pointer bg-gradient-to-br from-[#29F3DF]/20 to-[#29F3DF]/5 border-2 border-[#29F3DF] rounded-xl p-6 hover:from-[#29F3DF]/30 hover:to-[#29F3DF]/10 transition-all flex flex-col items-center justify-center gap-3 group"
                     >
-                      <div className="flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-[#29F3DF]/20 group-hover:bg-[#29F3DF]/30 transition-colors">
+                      <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-[#29F3DF]/20 group-hover:bg-[#29F3DF]/30 transition-colors">
                         <img 
                           src="/indicar_icon.svg" 
                           alt="Indicar" 
-                          className="w-6 h-6 lg:w-7 lg:h-7"
+                          className="w-7 h-7"
                         />
                       </div>
-                      <h3 className="text-white font-bold text-sm lg:text-base">INDICAR</h3>
+                      <h3 className="text-white font-bold text-base">INDICAR</h3>
                     </button>
 
                     <Link
                       href="/indicar-multiplos"
-                      className="bg-gradient-to-br from-[#C352F2]/20 to-[#C352F2]/5 border-2 border-[#C352F2] rounded-xl p-4 lg:p-6 hover:from-[#C352F2]/30 hover:to-[#C352F2]/10 transition-all flex flex-col items-center justify-center gap-2 lg:gap-3 group"
+                      className="bg-gradient-to-br from-[#C352F2]/20 to-[#C352F2]/5 border-2 border-[#C352F2] rounded-xl p-6 hover:from-[#C352F2]/30 hover:to-[#C352F2]/10 transition-all flex flex-col items-center justify-center gap-3 group"
                     >
-                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-[#C352F2]/20 group-hover:bg-[#C352F2]/30 transition-colors flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-xl bg-[#C352F2]/20 group-hover:bg-[#C352F2]/30 transition-colors flex items-center justify-center">
                         <img 
                           src="/indicar_em_massa_icon.svg" 
                           alt="Indicar em Massa" 
-                          className="w-6 h-6 lg:w-7 lg:h-7"
+                          className="w-7 h-7"
                         />
                       </div>
-                      <h3 className="text-white font-bold text-sm lg:text-base text-center">
-                        INDICAR<br className="lg:hidden" /> MÚLTIPLOS
+                      <h3 className="text-white font-bold text-base text-center">
+                        INDICAR MÚLTIPLOS
                       </h3>
                     </Link>
                     
                     {/* Botão REGRAS na mesma linha no desktop */}
                     <Link
                       href="/regras"
-                      className="bg-gradient-to-br from-[#F28907]/20 to-[#F28907]/5 border-2 border-[#F28907] rounded-xl p-4 lg:p-6 hover:from-[#F28907]/30 hover:to-[#F28907]/10 transition-all flex flex-col items-center justify-center gap-2 lg:gap-3 group"
+                      className="bg-gradient-to-br from-[#F28907]/20 to-[#F28907]/5 border-2 border-[#F28907] rounded-xl p-6 hover:from-[#F28907]/30 hover:to-[#F28907]/10 transition-all flex flex-col items-center justify-center gap-3 group"
                     >
                       <div className="w-14 h-14 rounded-xl bg-[#F28907]/20 group-hover:bg-[#F28907]/30 transition-colors flex items-center justify-center">
                         <Shield className="w-7 h-7 text-[#E06400]" />
@@ -152,52 +257,42 @@ export default function DashboardPage() {
                     </Link>
                   </div>
                 </div>
-                
-                {/* Botão REGRAS em linha separada - mobile only */}
-                <div className="px-6 lg:hidden">
-                  <Link
-                    href="/regras"
-                    className="block w-full border-b-5 border-r-5 border-[#F28907] bg-[#E06400] hover:bg-[#F28907]/90 text-white font-bold py-7 px-6 rounded-2xl transition-colors text-center text-xl"
-                  >
-                    REGRAS
-                  </Link>
-                </div>
 
-              {/* Indicações Card */}
-              <div className="mx-6 lg:mx-0">
-                <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-2xl lg:rounded-xl p-6 shadow-sm lg:min-h-[350px] flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl lg:text-xl font-bold text-white dark:text-white">Indicações</h2>
-                    <button className="w-10 h-10 lg:w-9 lg:h-9 rounded-lg bg-[#4A04A5] flex items-center justify-center hover:bg-[#4A04A5]/90 transition-colors">
-                      <svg className="w-5 h-5 lg:w-4 lg:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Empty State */}
-                  <div className="text-center py-12 lg:py-20 flex-1 flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 lg:w-20 lg:h-20 mx-auto mb-6 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
-                      <Shield className="w-10 h-10 text-[#C352F2]" />
+                {/* Indicações Card - DESKTOP */}
+                <div className="mx-0">
+                  <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm min-h-[350px] flex flex-col">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-xl font-bold text-white dark:text-white">Indicações</h2>
+                      <button className="w-9 h-9 rounded-lg bg-[#4A04A5] flex items-center justify-center hover:bg-[#4A04A5]/90 transition-colors">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                          />
+                        </svg>
+                      </button>
                     </div>
-                    <h3 className="text-xl lg:text-lg font-bold text-white dark:text-white mb-2">
-                      Nenhuma indicação encontrada
-                    </h3>
-                    <p className="text-white dark:text-gray-300 text-sm max-w-md">
-                      Você ainda não possui indicações registradas. Quando você indicar alguém, elas aparecerão aqui!
-                    </p>
+
+                    {/* Empty State */}
+                    <div className="text-center py-20 flex-1 flex flex-col items-center justify-center">
+                      <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
+                        <Shield className="w-10 h-10 text-[#C352F2]" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white dark:text-white mb-2">
+                        Nenhuma indicação encontrada
+                      </h3>
+                      <p className="text-white dark:text-gray-300 text-sm max-w-md">
+                        Você ainda não possui indicações registradas. Quando você indicar alguém, elas aparecerão aqui!
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
 
               {/* Sidebar - 4 columns on desktop */}
-              <div className="hidden lg:block lg:col-span-4 space-y-4">
+              <div className="col-span-4 space-y-4">
                 {/* Quick Stats */}
                 <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-5 shadow-sm">
                   <h3 className="text-base font-bold text-white dark:text-white mb-4">Desempenho do Mês</h3>
@@ -262,16 +357,6 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Status Button - mobile only */}
-          <div className="px-6 lg:hidden">
-            <Link
-              href="/status"
-              className="block w-full mt-6 bg-gradient-to-r from-[#C352F2] to-[#C352F2]/80 hover:from-[#C352F2]/90 hover:to-[#C352F2]/70 border-b-5 border-r-5 border-[#8822ED] text-white font-bold py-7 px-6 rounded-2xl transition-all text-center text-xl shadow-lg"
-            >
-              STATUS DAS PROPOSTAS
-            </Link>
           </div>
         </div>
 

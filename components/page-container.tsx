@@ -30,6 +30,7 @@ export function PageContainer({
     <div
       className={cn(
         "min-h-screen relative pb-24 lg:pb-0 transition-all duration-300",
+        "ml-0 lg:ml-0", // Força margem 0 no mobile
         sidebarCollapsed ? "lg:ml-[80px]" : "lg:ml-[280px]",
         className
       )}
