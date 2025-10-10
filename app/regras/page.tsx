@@ -238,9 +238,9 @@ export default function RegrasPage() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="mt-3 p-3 bg-gradient-to-r from-orange/5 to-orange/10 rounded-lg">
+                              <div className="mt-3 p-3 bg-gradient-to-r from-[#4A04A5]/5 to-[#4A04A5]/10 rounded-lg">
                                 <p className="text-sm text-black dark:text-gray">
-                                  <span className="font-bold text-orange">Demais ramos (cashback):</span> {formatToCurrency(unitData.bonusParameters.defaultCashback)}
+                                  <span className="font-bold text-[#4A04A5]">Demais ramos (cashback):</span> {formatToCurrency(unitData.bonusParameters.defaultCashback)}
                                 </p>
                               </div>
                             </div>
@@ -274,9 +274,9 @@ export default function RegrasPage() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="mt-3 p-3 bg-gradient-to-r from-[#4A04A5]/5 to-[#4A04A5]/10 rounded-lg">
+                              <div className="mt-3 p-3 bg-gradient-to-r from-orange/5 to-orange/10 rounded-lg">
                                 <p className="text-sm text-black dark:text-gray">
-                                  <span className="font-bold text-[#4A04A5] dark:text-[#C352F2]">Demais ramos (comissão):</span> {unitData.bonusParameters.defaultCommission}%
+                                  <span className="font-bold text-orange dark:text-orange">Demais ramos (comissão):</span> {unitData.bonusParameters.defaultCommission}%
                                 </p>
                               </div>
                             </div>

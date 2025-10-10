@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
     // Retorna os dados do usuário
     return NextResponse.json({
       userData: {
+        pixKey: userData?.pixKey,
         displayName: userData?.fullName,
         email: userData?.email,
         affiliated_to: userData?.affiliated_to,

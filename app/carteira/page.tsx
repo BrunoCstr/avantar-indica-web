@@ -7,31 +7,27 @@ import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { Eye, EyeOff, DollarSign, RefreshCw } from "lucide-react"
 import DashboardChart from "@/components/dashboard-chart"
-
-interface WithdrawalRequest {
-  withdrawId: string
-  amount: number
-  status: "PAGO" | "RECUSADO" | "PENDENTE"
-  createdAt: {
-    toDate: () => Date
-  }
-}
-
-interface UserData {
-  uid: string
-  displayName?: string
-  pixKey?: string
-  rule?: string
-  affiliated_to?: string
-  unitName?: string
-  profilePicture?: string
-}
+import { useAuth } from "@/context/Auth"
+import { 
+  getUserBalance,
+  subscribeToUserBalance,
+  getWithdrawalSummary,
+  type WithdrawalSummary 
+} from "@/services/wallet/dashboard"
+import { 
+  getUserWithdrawals, 
+  createWithdrawalRequest,
+  subscribeToUserWithdrawals,
+  canWithdraw,
+  type WithdrawalRequest 
+} from "@/services/wallet/withdrawals"
 
 export default function CarteiraPage() {
+  const { userData } = useAuth()
   const [data, setData] = useState<WithdrawalRequest[]>([])
   const [isLoadingBalance, setIsLoadingBalance] = useState(true)
   const [showBalance, setShowBalance] = useState(true)
-  const [balance, setBalance] = useState(998600.0)
+  const [balance, setBalance] = useState(0)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [modalMessage, setModalMessage] = useState({
     title: '',
@@ -41,20 +37,15 @@ export default function CarteiraPage() {
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [valorSaque, setValorSaque] = useState("")
-
-  // Mock user data - substitua pela implementação real do contexto de auth
-  const userData: UserData = {
-    uid: "mock-user-id",
-    displayName: "Usuário Teste",
-    pixKey: "test@email.com",
-    rule: "vendedor",
-    affiliated_to: "unit-001",
-    unitName: "Unidade Teste",
-    profilePicture: ""
-  }
+  const [withdrawalSummary, setWithdrawalSummary] = useState<WithdrawalSummary>({
+    receivedThisMonth: 0,
+    pendingWithdrawals: 0,
+    totalReceived: 0,
+  })
 
   const isLoading = isLoadingBalance
 
+  // Carregar dados do Firestore
   useEffect(() => {
     if (!userData?.uid) return
 
@@ -62,26 +53,8 @@ export default function CarteiraPage() {
 
     const fetchData = async () => {
       try {
-        // Mock data - substitua pela implementação real da API
-        const mockData: WithdrawalRequest[] = [
-          {
-            withdrawId: "1",
-            amount: 700.0,
-            status: "RECUSADO",
-            createdAt: {
-              toDate: () => new Date("2025-09-07")
-            }
-          },
-          {
-            withdrawId: "2",
-            amount: 700.0,
-            status: "PAGO",
-            createdAt: {
-              toDate: () => new Date("2025-09-06")
-            }
-          }
-        ]
-        setData(mockData)
+        const withdrawals = await getUserWithdrawals(userData.uid)
+        setData(withdrawals)
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error)
         setModalMessage({
@@ -94,9 +67,8 @@ export default function CarteiraPage() {
 
     const fetchBalance = async () => {
       try {
-        // Mock balance - substitua pela implementação real da API
-        const mockBalance = 998600.0
-        setBalance(mockBalance)
+        const userBalance = await getUserBalance(userData.uid)
+        setBalance(userBalance)
       } catch (error) {
         console.error('Erro ao buscar balance do usuário:', error)
       } finally {
@@ -104,8 +76,44 @@ export default function CarteiraPage() {
       }
     }
 
+    const fetchWithdrawalSummary = async () => {
+      try {
+        const summary = await getWithdrawalSummary(userData.uid)
+        setWithdrawalSummary(summary)
+      } catch (error) {
+        console.error('Erro ao buscar resumo financeiro:', error)
+      }
+    }
+
     fetchData()
     fetchBalance()
+    fetchWithdrawalSummary()
+
+    // Inscrever para atualizações em tempo real (opcional)
+    const unsubscribeBalance = subscribeToUserBalance(
+      userData.uid,
+      (newBalance) => {
+        setBalance(newBalance)
+      },
+      (error) => {
+        console.error('Erro ao monitorar saldo:', error)
+      }
+    )
+
+    const unsubscribeWithdrawals = subscribeToUserWithdrawals(
+      userData.uid,
+      (withdrawals) => {
+        setData(withdrawals)
+      },
+      (error) => {
+        console.error('Erro ao monitorar saques:', error)
+      }
+    )
+
+    return () => {
+      unsubscribeBalance()
+      unsubscribeWithdrawals()
+    }
   }, [userData?.uid])
 
   // Função do Pull Refresh
@@ -114,29 +122,16 @@ export default function CarteiraPage() {
     try {
       if (userData?.uid) {
         // Recarrega os dados de saque
-        const mockData: WithdrawalRequest[] = [
-          {
-            withdrawId: "1",
-            amount: 700.0,
-            status: "RECUSADO",
-            createdAt: {
-              toDate: () => new Date("2025-09-07")
-            }
-          },
-          {
-            withdrawId: "2",
-            amount: 700.0,
-            status: "PAGO",
-            createdAt: {
-              toDate: () => new Date("2025-09-06")
-            }
-          }
-        ]
-        setData(mockData)
+        const withdrawals = await getUserWithdrawals(userData.uid)
+        setData(withdrawals)
         
         // Recarrega o saldo
-        const mockBalance = 998600.0
-        setBalance(mockBalance)
+        const userBalance = await getUserBalance(userData.uid)
+        setBalance(userBalance)
+
+        // Recarrega o resumo financeiro
+        const summary = await getWithdrawalSummary(userData.uid)
+        setWithdrawalSummary(summary)
       }
     } catch (error) {
       console.error("Erro ao atualizar dados da carteira:", error)
@@ -147,7 +142,7 @@ export default function CarteiraPage() {
 
   async function handleWithdrawalRequest() {
     // Verificar se o usuário tem chave PIX cadastrada
-    if (!userData?.pixKey || userData.pixKey.trim() === '') {
+    if (!userData?.pixKey || (userData.pixKey && userData.pixKey.trim() === '')) {
       setModalMessage({
         title: 'Chave PIX não cadastrada',
         description:
@@ -169,12 +164,25 @@ export default function CarteiraPage() {
   }
 
   async function handleConfirmWithdrawal(amount: number) {
+    if (!userData) return
+
     setIsLoadingButton(true)
     setShowWithdrawalModal(false)
 
     try {
-      // Mock da criação da solicitação - substitua pela implementação real da API
-      console.log('Criando solicitação de saque:', amount)
+      const withdrawalData = {
+        amount: amount,
+        fullName: userData.displayName || '',
+        pixKey: userData.pixKey || '',
+        rule: userData.rule || '',
+        unitId: userData.affiliated_to || '',
+        unitName: userData.unitName || '',
+        userId: userData.uid || '',
+        profilePicture: userData.profilePicture || '',
+      }
+
+      // Criar a solicitação no banco de dados
+      await createWithdrawalRequest(withdrawalData)
 
       setModalMessage({
         title: 'Saque solicitado',
@@ -183,21 +191,50 @@ export default function CarteiraPage() {
           currency: 'BRL',
         }).format(
           amount,
-        )} foi solicitado à unidade: ${userData?.unitName}, o prazo médio de liberação é de 10 dias úteis, você pode acompanhar o status em sua carteira!`,
+        )} foi solicitado à unidade: ${userData.unitName}, o prazo médio de liberação é de 10 dias úteis, você pode acompanhar o status em sua carteira!`,
       })
       setIsModalVisible(true)
 
       // Recarregar os dados da carteira
-      if (userData?.uid) {
-        // Simular recarga de dados
-        await new Promise(resolve => setTimeout(resolve, 1000))
+      if (userData.uid) {
+        const withdrawals = await getUserWithdrawals(userData.uid)
+        setData(withdrawals)
+
+        // Recarregar o saldo atualizado
+        const updatedBalance = await getUserBalance(userData.uid)
+        setBalance(updatedBalance)
+
+        // Recarregar o resumo financeiro
+        const summary = await getWithdrawalSummary(userData.uid)
+        setWithdrawalSummary(summary)
       }
     } catch (error) {
       console.error('Erro ao criar solicitação de saque:', error)
-      setModalMessage({
-        title: 'Erro!',
-        description: `Erro ao solicitar saque. Tente novamente.`,
-      })
+
+      // Verificar se é erro de chave PIX
+      if (
+        error instanceof Error &&
+        error.message === 'Chave PIX não cadastrada'
+      ) {
+        setModalMessage({
+          title: 'Chave PIX não cadastrada',
+          description:
+            'Para realizar um saque, você precisa cadastrar sua chave PIX no perfil. Acesse Perfil > Dados para Pagamento para atualizar.',
+        })
+      } else if (
+        error instanceof Error &&
+        error.message === 'Saldo insuficiente para realizar o saque'
+      ) {
+        setModalMessage({
+          title: 'Saldo insuficiente',
+          description: 'Você não possui saldo suficiente para realizar este saque.',
+        })
+      } else {
+        setModalMessage({
+          title: 'Erro!',
+          description: `Erro ao solicitar saque. Tente novamente.`,
+        })
+      }
       setIsModalVisible(true)
     } finally {
       setIsLoadingButton(false)
@@ -504,19 +541,34 @@ export default function CarteiraPage() {
                   <h3 className="text-lg font-bold text-black dark:text-white mb-6">Resumo Financeiro</h3>
                   
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-br from-[#29F3DF]/10 to-[#29F3DF]/5 border border-[#29F3DF]/20 rounded-lg p-4">
+                    <div className="bg-gradient-to-br from-[#4A04A5]/10 to-[#4A04A5]/5 border border-[#4A04A5]/20 rounded-lg p-4">
                       <p className="text-xs text-black dark:text-gray mb-1">Recebido este mês</p>
-                      <p className="text-2xl font-bold text-[#29F3DF]">R$ 0,00</p>
+                      <p className="text-2xl font-bold text-[#4A04A5]">
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        }).format(withdrawalSummary.receivedThisMonth)}
+                      </p>
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#C352F2]/10 to-[#C352F2]/5 border border-[#C352F2]/20 rounded-lg p-4">
+                    <div className="bg-gradient-to-br from-[#4A04A5]/10 to-[#4A04A5]/5 border border-[#4A04A5]/20 rounded-lg p-4">
                       <p className="text-xs text-black dark:text-gray mb-1">Pendente de recebimento</p>
-                      <p className="text-2xl font-bold text-[#C352F2]">R$ 0,00</p>
+                      <p className="text-2xl font-bold text-[#4A04A5]">
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        }).format(withdrawalSummary.pendingWithdrawals)}
+                      </p>
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#F28907]/10 to-[#F28907]/5 border border-[#F28907]/20 rounded-lg p-4">
+                    <div className="bg-gradient-to-br from-green/10 to-green/5 border border-green/20 rounded-lg p-4">
                       <p className="text-xs text-black dark:text-gray mb-1">Total recebido</p>
-                      <p className="text-2xl font-bold text-[#F28907]">R$ 0,00</p>
+                      <p className="text-2xl font-bold text-black dark:text-white">
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        }).format(withdrawalSummary.totalReceived)}
+                      </p>
                     </div>
                   </div>
                 </div>

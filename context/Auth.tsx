@@ -31,6 +31,7 @@ interface UserData {
   unitName: string;
   unitId: string;
   isFirstLogin: boolean;
+  pixKey?: string | null;
   // Configurações de UI
   uiSettings?: {
     sidebarCollapsed?: boolean;

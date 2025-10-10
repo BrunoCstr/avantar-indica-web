@@ -11,6 +11,8 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts'
+import { useAuth } from '@/context/Auth'
+import { getCommissionsByPeriod } from '@/services/wallet/dashboard'
 
 interface ChartDataItem {
   name: string
@@ -26,55 +28,48 @@ interface ChartData {
 }
 
 const DashboardChart = () => {
+  const { userData } = useAuth()
   const [data, setData] = useState<ChartData | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState('Mês')
   const [isLoading, setIsLoading] = useState(true)
 
-  // Mock user data - substitua pela implementação real do contexto de auth
-  const userData = {
-    uid: "mock-user-id"
-  }
-
   useEffect(() => {
     const fetchData = async () => {
+      if (!userData?.uid) {
+        setIsLoading(false)
+        return
+      }
+
       try {
         setIsLoading(true)
-        // Mock data - substitua pela implementação real da API
-        const mockData: ChartData = {
-          week: [
-            { name: 'Dom', value: 0, count: 0, formattedValue: 'R$ 0,00' },
-            { name: 'Seg', value: 150, count: 2, formattedValue: 'R$ 150,00' },
-            { name: 'Ter', value: 300, count: 4, formattedValue: 'R$ 300,00' },
-            { name: 'Qua', value: 200, count: 3, formattedValue: 'R$ 200,00' },
-            { name: 'Qui', value: 400, count: 5, formattedValue: 'R$ 400,00' },
-            { name: 'Sex', value: 250, count: 3, formattedValue: 'R$ 250,00' },
-            { name: 'Sáb', value: 0, count: 0, formattedValue: 'R$ 0,00' }
-          ],
-          month: [
-            { name: 'Semana 1', value: 1200, count: 15, formattedValue: 'R$ 1.200,00' },
-            { name: 'Semana 2', value: 800, count: 10, formattedValue: 'R$ 800,00' },
-            { name: 'Semana 3', value: 1500, count: 20, formattedValue: 'R$ 1.500,00' },
-            { name: 'Semana 4', value: 0, count: 0, formattedValue: 'R$ 0,00' },
-            { name: 'Semana 5', value: 0, count: 0, formattedValue: 'R$ 0,00' }
-          ],
-          year: [
-            { name: 'Jan', value: 5000, count: 50, formattedValue: 'R$ 5.000,00' },
-            { name: 'Fev', value: 4500, count: 45, formattedValue: 'R$ 4.500,00' },
-            { name: 'Mar', value: 6000, count: 60, formattedValue: 'R$ 6.000,00' },
-            { name: 'Abr', value: 5500, count: 55, formattedValue: 'R$ 5.500,00' },
-            { name: 'Mai', value: 7000, count: 70, formattedValue: 'R$ 7.000,00' },
-            { name: 'Jun', value: 6500, count: 65, formattedValue: 'R$ 6.500,00' },
-            { name: 'Jul', value: 8000, count: 80, formattedValue: 'R$ 8.000,00' },
-            { name: 'Ago', value: 7500, count: 75, formattedValue: 'R$ 7.500,00' },
-            { name: 'Set', value: 0, count: 0, formattedValue: 'R$ 0,00' },
-            { name: 'Out', value: 0, count: 0, formattedValue: 'R$ 0,00' },
-            { name: 'Nov', value: 0, count: 0, formattedValue: 'R$ 0,00' },
-            { name: 'Dez', value: 0, count: 0, formattedValue: 'R$ 0,00' }
-          ]
+        // Buscar dados reais do Firestore
+        const commissionsData = await getCommissionsByPeriod(userData.uid)
+        
+        // Converter os dados para o formato do gráfico (label -> name)
+        const chartData: ChartData = {
+          week: commissionsData.week.map(item => ({
+            name: item.label,
+            value: item.value,
+            count: item.count,
+            formattedValue: item.formattedValue,
+          })),
+          month: commissionsData.month.map(item => ({
+            name: item.label,
+            value: item.value,
+            count: item.count,
+            formattedValue: item.formattedValue,
+          })),
+          year: commissionsData.year.map(item => ({
+            name: item.label,
+            value: item.value,
+            count: item.count,
+            formattedValue: item.formattedValue,
+          })),
         }
-        setData(mockData)
+        
+        setData(chartData)
       } catch (error) {
-        console.error('error', error)
+        console.error('Erro ao buscar dados do gráfico:', error)
       } finally {
         setIsLoading(false)
       }
@@ -145,15 +140,15 @@ const DashboardChart = () => {
       return (
         <div className="bg-white dark:bg-[#190d26] rounded-lg shadow-lg border border-gray dark:border-tertiary-purple overflow-hidden">
           {/* Header com gradiente roxo claro */}
-          <div className="bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 p-3">
-            <p className="font-semibold text-white dark:text-blue">{label}</p>
+          <div className="bg-gradient-to-r from-primary-purple/10 to-secondary-purple/10 dark:from-primary-purple/20 dark:to-secondary-purple/20 p-3">
+            <p className="font-semibold text-black dark:text-blue">{label}</p>
           </div>
           {/* Conteúdo */}
           <div className="p-3">
-            <p className="text-sm text-white dark:text-gray">
+            <p className="text-sm text-black dark:text-gray">
               Valor: <span className="font-bold">{data.formattedValue}</span>
             </p>
-            <p className="text-sm text-white dark:text-gray">
+            <p className="text-sm text-black dark:text-gray">
               Indicações: <span className="font-bold">{data.count}</span>
             </p>
           </div>
