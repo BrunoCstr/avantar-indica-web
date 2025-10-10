@@ -7,6 +7,7 @@ import { DesktopSidebar } from "@/components/desktop-sidebar";
 import { PageContainer, PageBackground } from "@/components/page-container";
 import { StatsCard } from "@/components/stats-card";
 import { IndicarModal } from "@/components/indicar-modal";
+import IndicationsChart from "@/components/indications-chart";
 import {
   BellRing,
   Shield,
@@ -196,22 +197,15 @@ export default function DashboardPage() {
 
             {/* Indicações Card - MOBILE */}
             <div className="px-6 mt-5">
-              <div className="bg-white rounded-2xl pt-4 h-64">
-                <div className="flex items-center justify-between px-6">
+              <div className="bg-white rounded-2xl pt-4 pb-4 px-4">
+                <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-bold text-primary-purple">
-                    Indicar
+                    Indicações e Oportunidades
                   </h2>
-                  <button
-                    onClick={() => setShowFilter(!showFilter)}
-                    className="w-10 h-10 rounded-lg bg-primary-purple flex items-center justify-center hover:bg-primary-purple/90 transition-colors"
-                  >
-                    {showFilter ? (
-                      <X className="w-5 h-5 text-white" />
-                    ) : (
-                      <Sliders className="w-5 h-5 text-white" />
-                    )}
-                  </button>
                 </div>
+                
+                {/* Gráfico de Indicações */}
+                <IndicationsChart />
 
                 {/* Lista de Convites - Scroll */}
                 <div className="overflow-y-auto h-[calc(100%-3.5rem)] mt-1 px-6 pb-1.5">
@@ -332,41 +326,15 @@ export default function DashboardPage() {
 
                 {/* Indicações Card - DESKTOP */}
                 <div className="mx-0">
-                  <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm min-h-[350px] flex flex-col">
+                  <div className="bg-white dark:bg-[#190d26] border border-gray-100 dark:border-tertiary-purple rounded-xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-xl font-bold text-black dark:text-white">
-                        Indicações
+                        Indicações e Oportunidades
                       </h2>
-                      <button className="w-9 h-9 rounded-lg bg-[#4A04A5] flex items-center justify-center hover:bg-[#4A04A5]/90 transition-colors">
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                          />
-                        </svg>
-                      </button>
                     </div>
 
-                    {/* Empty State */}
-                    <div className="text-center py-20 flex-1 flex flex-col items-center justify-center">
-                      <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
-                        <Shield className="w-10 h-10 text-[#C352F2]" />
-                      </div>
-                      <h3 className="text-lg font-bold text-black dark:text-white mb-2">
-                        Nenhuma indicação encontrada
-                      </h3>
-                      <p className="text-black dark:text-gray text-sm max-w-md">
-                        Você ainda não possui indicações registradas. Quando
-                        você indicar alguém, elas aparecerão aqui!
-                      </p>
-                    </div>
+                    {/* Gráfico de Indicações */}
+                    <IndicationsChart />
                   </div>
                 </div>
               </div>

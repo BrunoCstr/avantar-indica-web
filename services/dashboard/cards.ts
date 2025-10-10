@@ -20,7 +20,7 @@ export async function getTotalIndicationsOfMonth(uid: string) {
     const indicationsRef = collection(db, "indications");
     const q = query(
       indicationsRef,
-      where("userId", "==", uid),
+      where("indicator_id", "==", uid),
       where("createdAt", ">=", firstDayOfMonth),
       where("createdAt", "<=", currentDayOfMonth)
     );
@@ -37,7 +37,7 @@ export async function getTotalOpportunitiesOfMonth(uid: string) {
     const opportunitiesRef = collection(db, "opportunities");
     const q = query(
       opportunitiesRef,
-      where("userId", "==", uid),
+      where("indicator_id", "==", uid),
       where("createdAt", ">=", firstDayOfMonth),
       where("createdAt", "<=", currentDayOfMonth)
     );
@@ -53,7 +53,7 @@ export async function getTotalCommissionOfMonth(uid: string) {
   try {
     const q = query(
       collection(db, "opportunities"),
-      where("userId", "==", uid),
+      where("indicator_id", "==", uid),
       where("createdAt", ">=", firstDayOfMonth),
       where("createdAt", "<", currentDayOfMonth),
       where("status", "==", "FECHADO"),
