@@ -265,7 +265,7 @@ export default function IndicarMultiplosPage() {
               )}
             </div>
 
-            <h1 className="text-3xl font-bold text-white text-center mb-8">Convites Múltiplos</h1>
+            <h1 className="text-3xl font-bold text-white text-center mb-8">Indicar Múltiplos</h1>
 
             {/* Card de Nova Indicação */}
             <div className="bg-[#4A04A5]/40 rounded-3xl p-6 mb-6">
@@ -409,13 +409,6 @@ export default function IndicarMultiplosPage() {
                   />
                 </div>
 
-                {/* Informação B2B */}
-                <div className="bg-[#29F3DF]/10 border border-[#29F3DF] p-3 rounded-xl">
-                  <p className="text-xs text-center text-white/80 leading-relaxed">
-                    <span className="font-bold text-[#29F3DF]">ℹ️ PROCESSO B2B:</span> Você deve ter autorização verbal prévia do cliente. Um e-mail será enviado para confirmação eletrônica do consentimento.
-                  </p>
-                </div>
-
                 {/* Checkbox de consentimento */}
                 <div className="flex items-start gap-3 bg-[#4A04A5]/30 p-3 rounded-xl">
                   <input
@@ -426,7 +419,7 @@ export default function IndicarMultiplosPage() {
                     className="mt-1 w-5 h-5 rounded border-2 border-[#29F3DF] bg-transparent checked:bg-[#29F3DF] checked:border-[#29F3DF] cursor-pointer"
                   />
                   <label htmlFor="consent-mobile" className="text-white text-xs cursor-pointer leading-relaxed">
-                    <span className="font-bold">DECLARO que obtive autorização verbal prévia</span> do cliente para compartilhar seus dados, e que ele está ciente de que receberá um e-mail de confirmação.
+                    <span className="font-bold">DECLARO que obtive autorização verbal prévia</span> do contato para compartilhar seus dados.
                   </label>
                 </div>
 
@@ -456,7 +449,7 @@ export default function IndicarMultiplosPage() {
             {indicationsList.length > 0 ? (
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-white mb-4">
-                  Convites Preparados ({indicationsList.length})
+                  Indicações Preparadas ({indicationsList.length})
                 </h3>
                 {indicationsList.map((ind, index) => (
                   <div key={ind.id} className="bg-[#4A04A5]/40 rounded-2xl p-4 border border-white/20">
@@ -536,10 +529,10 @@ export default function IndicarMultiplosPage() {
                   <Users className="w-8 h-8 text-[#29F3DF]" />
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">
-                  Nenhum convite adicionado
+                  Nenhuma indicação adicionada
                 </h4>
                 <p className="text-sm text-white/70">
-                  Preencha o formulário acima para adicionar seus primeiros convites
+                  Preencha o formulário acima para adicionar suas primeiras indicações
                 </p>
               </div>
             )}
@@ -554,9 +547,9 @@ export default function IndicarMultiplosPage() {
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-black dark:text-white">Convites Múltiplos</h1>
+                <h1 className="text-3xl font-bold text-black dark:text-white">Indicar Múltiplos</h1>
                 <p className="text-sm text-black dark:text-gray mt-1">
-                  Adicione várias indicações e envie convites por e-mail
+                  Adicione várias indicações e envie diretamente
                 </p>
               </div>
               {indicationsList.length > 0 && (
@@ -594,7 +587,7 @@ export default function IndicarMultiplosPage() {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-black dark:text-white">
-                        {editingIndex !== null ? "Editar Convite" : "Novo Convite"}
+                        {editingIndex !== null ? "Editar Indicação" : "Nova Indicação"}
                       </h2>
                       <p className="text-sm text-black dark:text-gray">
                         {editingIndex !== null ? "Modifique os dados abaixo" : "Preencha os dados abaixo"}
@@ -743,13 +736,6 @@ export default function IndicarMultiplosPage() {
                       />
                     </div>
 
-                    {/* Informação B2B */}
-                    <div className="bg-[#29F3DF]/10 border border-[#29F3DF] p-4 rounded-xl">
-                      <p className="text-xs text-center text-black dark:text-gray leading-relaxed">
-                        <span className="font-bold text-[#29F3DF]">ℹ️ PROCESSO B2B:</span> Você deve ter autorização verbal prévia do cliente. Um e-mail será enviado para confirmação eletrônica do consentimento.
-                      </p>
-                    </div>
-
                     {/* Checkbox */}
                     <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-[#4A04A5]/10 rounded-xl">
                       <input
@@ -760,7 +746,7 @@ export default function IndicarMultiplosPage() {
                         className="mt-1 w-5 h-5 rounded border-2 border-[#29F3DF] bg-transparent checked:bg-[#29F3DF] checked:border-[#29F3DF] cursor-pointer"
                       />
                       <label htmlFor="consent-desktop" className="text-black dark:text-gray text-sm cursor-pointer leading-relaxed">
-                        <span className="font-bold">DECLARO que obtive autorização verbal prévia</span> do cliente para compartilhar seus dados, e que ele está ciente de que receberá um e-mail de confirmação.
+                        <span className="font-bold">DECLARO que obtive autorização verbal prévia</span> do indicado para compartilhar seus dados.
                       </label>
                     </div>
 
@@ -797,9 +783,9 @@ export default function IndicarMultiplosPage() {
                         <Users className="w-5 h-5 text-[#C352F2]" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-black dark:text-white">Lista de Convites</h3>
+                        <h3 className="text-lg font-bold text-black dark:text-white">Lista de Indicações</h3>
                         <p className="text-xs text-black dark:text-gray">
-                          {indicationsList.length} {indicationsList.length === 1 ? "convite" : "convites"}
+                          {indicationsList.length} {indicationsList.length === 1 ? "indicação" : "indicações"}
                         </p>
                       </div>
                     </div>
@@ -811,10 +797,10 @@ export default function IndicarMultiplosPage() {
                         <Users className="w-8 h-8 text-[#C352F2]" />
                       </div>
                       <h4 className="text-base font-bold text-black dark:text-white mb-2">
-                        Nenhum convite adicionado
+                        Nenhuma indicação adicionada
                       </h4>
                       <p className="text-sm text-black dark:text-gray">
-                        Preencha o formulário ao lado para adicionar convites
+                        Preencha o formulário ao lado para adicionar indicações
                       </p>
                     </div>
                   ) : (
@@ -889,7 +875,7 @@ export default function IndicarMultiplosPage() {
                         ) : (
                           <>
                             <Send className="w-5 h-5" />
-                            Enviar {indicationsList.length} {indicationsList.length === 1 ? "Convite" : "Convites"}
+                            Enviar {indicationsList.length} {indicationsList.length === 1 ? "Indicação" : "Indicações"}
                           </>
                         )}
                       </button>

@@ -3,6 +3,24 @@
 import { useState } from "react";
 import { ChevronDown, Plus  } from "lucide-react";
 import { BackButton } from "./back-button";
+import { formatToCurrency } from "@/utils/formatCurrency";
+
+interface CommissioningParameters {
+  cashbackPerProduct: {
+    auto: number;
+    consorcio: number;
+    empresarial: number;
+    vida: number;
+  };
+  commissionPerProduct: {
+    auto: number;
+    consorcio: number;
+    empresarial: number;
+    vida: number;
+  };
+  defaultCashback: number;
+  defaultCommission: number;
+}
 
 interface RulesComponentProps {
   title: string;
@@ -13,7 +31,7 @@ interface RulesComponentProps {
   titleDescription3: string;
   description3: string;
   rewards: string;
-  bonusParameters: any;
+  bonusParameters: CommissioningParameters;
   unitName: string;
   updatedAt: string;
   showPartnerSection: boolean;
@@ -52,12 +70,27 @@ export function RulesComponent({
     }));
   };
 
+  // Função para formatar datas do Firestore ou objeto Timestamp
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return '';
+    if (typeof timestamp === 'string') return timestamp;
+    if (timestamp.toDate) {
+      // Firestore Timestamp
+      return timestamp.toDate().toLocaleDateString('pt-BR');
+    }
+    if (timestamp._seconds) {
+      // Objeto bruto
+      return new Date(timestamp._seconds * 1000).toLocaleDateString('pt-BR');
+    }
+    return String(timestamp);
+  };
+
   return (
     <div className="min-h-screen bg-white-responsive dark:bg-dark-responsive">
       <div className="px-6 py-12">
         {/* Back Button */}
         <div className="mb-6">
-          <BackButton bgColor="#4A04A5" />
+          <BackButton bgColor="purple" route="/dashboard" />
         </div>
 
         {/* Main Card */}
@@ -71,9 +104,9 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("tipos")}
-              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-primary-purple rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 {title}
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
@@ -86,7 +119,7 @@ export function RulesComponent({
             </button>
 
             {expandedSections.tipos && (
-              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white space-y-6">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 border-pink border-t-0 rounded-b-xl p-6 text-white space-y-6">
                 {/* Cliente Indicador */}
                 <div>
                   <h3 className="text-lg font-bold mb-3">{titleDescription}</h3>
@@ -132,9 +165,9 @@ export function RulesComponent({
           <div className="mb-4">
             <button
               onClick={() => toggleSection("recompensas")}
-              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-primary-purple rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 RECOMPENSAS
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
@@ -147,7 +180,7 @@ export function RulesComponent({
             </button>
 
             {expandedSections.recompensas && (
-              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 border-pink border-t-0 rounded-b-xl p-6 text-white">
                 <div className="space-y-2 text-sm leading-relaxed">
                   {rewards.split("\n").map((line, index) => (
                     <div key={index} className="flex items-start gap-2">
@@ -164,9 +197,9 @@ export function RulesComponent({
           <div>
             <button
               onClick={() => toggleSection("bonificacao")}
-              className="w-full bg-gradient-to-r from-avantar-primary/10 to-avantar-secondary/10 dark:from-avantar-primary/20 dark:to-avantar-secondary/20 rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
+              className="w-full bg-white dark:bg-primary-purple rounded-t-2xl p-4 flex items-center justify-between shadow-sm"
             >
-              <h2 className="text-lg font-bold text-white dark:text-white uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-black dark:text-white uppercase tracking-wide">
                 BONIFICAÇÃO
               </h2>
               <div className="w-8 h-8 bg-primary-purple dark:bg-blue border-2 border-primary-purple dark:border-blue rounded-full flex items-center justify-center">
@@ -179,36 +212,60 @@ export function RulesComponent({
             </button>
 
             {expandedSections.bonificacao && (
-              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 rounded-b-2xl p-6 text-white">
+              <div className="bg-primary-purple dark:bg-tertiary-purple border-2 border-pink border-t-0 rounded-b-xl p-6 text-white">
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-lg font-bold mb-2">
                       Parâmetros de Bonificação
                     </h3>
-                    <p className="text-sm text-gray-300">
-                      Configurado por: {unitName}
+                    <p className="text-sm text-blue font-bold mb-2">
+                      {unitName}
                     </p>
-                    <p className="text-sm text-gray-300">
-                      Última atualização: {updatedAt}
+                    
+                    {/* Cashback por produto (para clientes) */}
+                    {userRule !== 'parceiro_indicador' && (
+                      <div className="space-y-2">
+                        <p className="text-blue font-bold text-base">
+                          Cashback por produto:
+                        </p>
+                        {bonusParameters?.cashbackPerProduct && (
+                          <div className="space-y-1">
+                            <p className="text-white text-sm">Auto: {formatToCurrency(bonusParameters.cashbackPerProduct.auto)}</p>
+                            <p className="text-white text-sm">Consórcio: {formatToCurrency(bonusParameters.cashbackPerProduct.consorcio)}</p>
+                            <p className="text-white text-sm">Empresarial: {formatToCurrency(bonusParameters.cashbackPerProduct.empresarial)}</p>
+                            <p className="text-white text-sm">Vida: {formatToCurrency(bonusParameters.cashbackPerProduct.vida)}</p>
+                          </div>
+                        )}
+                        <p className="text-white text-base mt-2">
+                          <span className="text-blue font-bold">Demais ramos (cashback):</span> {formatToCurrency(bonusParameters?.defaultCashback || 0)}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Comissão por produto (para parceiros) */}
+                    {userRule !== 'cliente_indicador' && (
+                      <div className="space-y-2">
+                        <p className="text-blue font-bold text-base">
+                          Comissão por produto:
+                        </p>
+                        {bonusParameters?.commissionPerProduct && (
+                          <div className="space-y-1">
+                            <p className="text-white text-sm">Auto: {bonusParameters.commissionPerProduct.auto}%</p>
+                            <p className="text-white text-sm">Consórcio: {bonusParameters.commissionPerProduct.consorcio}%</p>
+                            <p className="text-white text-sm">Empresarial: {bonusParameters.commissionPerProduct.empresarial}%</p>
+                            <p className="text-white text-sm">Vida: {bonusParameters.commissionPerProduct.vida}%</p>
+                          </div>
+                        )}
+                        <p className="text-white text-base mt-2">
+                          <span className="text-blue font-bold">Demais ramos (comissão):</span> {bonusParameters?.defaultCommission}%
+                        </p>
+                      </div>
+                    )}
+
+                    <p className="text-white font-bold text-base mt-4">
+                      Última atualização: {formatDate(updatedAt)}
                     </p>
                   </div>
-
-                  {bonusParameters && (
-                    <div className="space-y-2 text-sm leading-relaxed">
-                      <p className="text-white">
-                         As bonificações são calculadas conforme os parâmetros
-                        configurados pela sua unidade.
-                      </p>
-                      <p className="text-white">
-                         Valores podem variar de acordo com o produto e tipo de
-                        cliente.
-                      </p>
-                      <p className="text-white">
-                         Consulte sempre os valores atualizados antes de fazer
-                        indicações.
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

@@ -29,6 +29,7 @@ interface User {
   telefone: string;
   email: string;
   chavePix: string;
+  profilePicture: string;
 }
 
 export default function DashboardPage() {
@@ -141,7 +142,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-4">
                   <button className="w-16 h-16 rounded-full overflow-hidden border-2 border-transparent hover:border-blue transition-colors">
                     <img
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-08%20at%2008.53.18%20(1)-rX4Qs-yLD9hO2Z3nnrE6RlwFyw2MmUebYn8r.jpeg"
+                      src={userData?.profilePicture}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -209,7 +210,7 @@ export default function DashboardPage() {
             <div className="px-6 mt-5">
               <Link
                 href="/regras"
-                className="block w-full bg-[#E06400] text-white font-bold py-[1.75rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#F28907]"
+                className="block w-full bg-[#E06400] text-white font-bold py-[1.5rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#F28907]"
               >
                 REGRAS
               </Link>
@@ -226,23 +227,6 @@ export default function DashboardPage() {
                 
                 {/* Gráfico de Indicações */}
                 <IndicationsChart />
-
-                {/* Lista de Convites - Scroll */}
-                <div className="overflow-y-auto h-[calc(100%-3.5rem)] mt-1 px-6 pb-1.5">
-                  {/* Empty State */}
-                  <div className="text-center py-12 flex flex-col items-center justify-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-[#C352F2]/10 flex items-center justify-center">
-                      <Shield className="w-8 h-8 text-[#C352F2]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-primary-purple mb-2">
-                      Nenhum convite encontrado
-                    </h3>
-                    <p className="text-gray-600 text-sm max-w-md px-4">
-                      Você ainda não possui convites registrados. Quando você
-                      convidar alguém, elas aparecerão aqui!
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -250,7 +234,7 @@ export default function DashboardPage() {
             <div className="px-6 mt-5 pb-6">
               <Link
                 href="/status"
-                className="block w-full bg-gradient-to-r from-[#C352F2] to-[#C352F2]/80 text-white font-bold py-[1.75rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#8822ED]"
+                className="block w-full bg-gradient-to-r from-[#C352F2] to-[#C352F2]/80 text-white font-bold py-[1.5rem] px-6 rounded-2xl text-center text-[22px] shadow-[4px_4px_0px_0px_#8822ED]"
               >
                 STATUS DAS PROPOSTAS
               </Link>
