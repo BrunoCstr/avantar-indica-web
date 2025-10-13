@@ -33,7 +33,7 @@ import {
 import { Spinner } from "@/components/Spinner"
 import { useRouter } from "next/navigation"
 
-// Schema de validação para cadastro/edição de vendedor
+// Schema de validação para cadastro de vendedor
 const sellerSignUpSchema = z
   .object({
     fullName: z.string().min(3, "Nome é obrigatório"),
@@ -57,7 +57,37 @@ const sellerSignUpSchema = z
     path: ["confirmPassword"],
   })
 
-type SellerFormData = z.infer<typeof sellerSignUpSchema>
+// Schema de validação para edição de vendedor (senha opcional)
+const sellerEditSchema = z
+  .object({
+    fullName: z.string().min(3, "Nome é obrigatório"),
+    email: z.string().email("E-mail inválido"),
+    phone: z
+      .string()
+      .min(14, "Digite um telefone válido!")
+      .max(15, "Digite um telefone válido!")
+      .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Formato de telefone inválido!"),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+    commission: z
+      .number()
+      .min(0, "Comissão deve ser entre 0 e 100")
+      .max(100, "Comissão deve ser entre 0 e 100")
+      .optional()
+      .nullable(),
+  })
+  .refine((data) => {
+    if (data.password && data.password !== "") {
+      return data.password === (data.confirmPassword ?? "")
+    }
+    return true
+  }, {
+    message: "As senhas devem ser iguais!",
+    path: ["confirmPassword"],
+  })
+
+type SellerCreateFormData = z.infer<typeof sellerSignUpSchema>
+type SellerEditFormData = z.infer<typeof sellerEditSchema>
 
 export default function VendedoresPage() {
   const { userData } = useAuth()
@@ -89,7 +119,7 @@ export default function VendedoresPage() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<SellerFormData>({
+  } = useForm<SellerCreateFormData>({
     resolver: zodResolver(sellerSignUpSchema),
     defaultValues: {
       fullName: "",
@@ -108,8 +138,8 @@ export default function VendedoresPage() {
     formState: { errors: errorsEdit },
     reset: resetEdit,
     watch: watchEdit,
-  } = useForm<SellerFormData>({
-    resolver: zodResolver(sellerSignUpSchema),
+  } = useForm<SellerEditFormData>({
+    resolver: zodResolver(sellerEditSchema),
     defaultValues: {
       fullName: "",
       email: "",
@@ -189,7 +219,7 @@ export default function VendedoresPage() {
   }
 
   // Criar vendedor
-  async function onSubmit(data: SellerFormData) {
+  async function onSubmit(data: SellerCreateFormData) {
     setIsLoadingRegister(true)
     try {
       const { fullName, email, phone, password, commission } = data
@@ -243,7 +273,7 @@ export default function VendedoresPage() {
   }
 
   // Editar vendedor
-  async function onSubmitEdit(data: SellerFormData) {
+  async function onSubmitEdit(data: SellerEditFormData) {
     if (!editingSeller) return
     setIsLoadingEdit(true)
     try {
@@ -381,13 +411,13 @@ export default function VendedoresPage() {
           {/* Search Bar */}
           <div className="mb-6 lg:max-w-2xl">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/80 lg:text-gray-400 lg:dark:text-white/80" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/80 lg:text-black lg:dark:text-white/80" />
               <input
                 type="text"
                 placeholder="Pesquisar por nome..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                className="w-full bg-[#170138] border-b-2 border-l-2 border-[#29F3DF] text-white placeholder:text-white/60 pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#29F3DF]/50 lg:bg-white lg:border-gray-300 lg:text-black lg:placeholder:text-gray-400 lg:focus:ring-[#4A04A5]/50 lg:focus:border-[#4A04A5] lg:dark:bg-[#170138] lg:dark:border-[#29F3DF] lg:dark:text-white lg:dark:placeholder:text-white/60 lg:dark:focus:ring-[#29F3DF]/50"
+                className="w-full bg-[#170138] border-b-4 border-l-4 border-[#C352F2] text-white placeholder:text-white/60 pl-12 pr-4 py-4 rounded-2xl focus:outline-none lg:bg-white lg:border-gray-300 lg:text-black lg:placeholder:text-black lg:focus:ring-[#4A04A5]/50 lg:focus:border-[#4A04A5] lg:dark:bg-[#170138] lg:dark:border-[#C352F2] lg:dark:text-white lg:dark:placeholder:text-white/60"
               />
             </div>
           </div>
@@ -409,7 +439,7 @@ export default function VendedoresPage() {
                   <tr>
                     <td colSpan={5} className="text-center py-8">
                       <div className="flex justify-center">
-                        <Spinner />
+                        <Spinner variant="blue" />
                       </div>
                     </td>
                   </tr>
