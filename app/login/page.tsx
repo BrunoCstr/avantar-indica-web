@@ -46,7 +46,7 @@ export default function LoginPage() {
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     try {
-      const errorCode = await signIn(data.email, data.password, "nao_definido");
+      const errorCode = await signIn(data.email, data.password, "nao_definida");
 
       if (errorCode) {
         switch (errorCode) {

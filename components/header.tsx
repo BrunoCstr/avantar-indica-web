@@ -41,8 +41,6 @@ export function Header({ userType }: HeaderProps) {
   const firstName = fullName?.split(" ")[0];
   const isFirstLogin  = userData;
 
-  console.log(isFirstLogin);
-
   useEffect(() => {
     if (!userData?.uid) return;
 

@@ -152,15 +152,11 @@ export default function VendedoresPage() {
   })
 
   // Verificar permissões
-  useEffect(() => {
-    console.log("Vendedores - userData:", userData)
-    console.log("Vendedores - userData.rule:", userData?.rule)
-    
+  useEffect(() => {  
     if (
       userData &&
       !["parceiro_indicador", "admin_franqueadora", "admin_unidade"].includes(userData.rule)
     ) {
-      console.log("Usuário sem permissão para vendedores, redirecionando para dashboard")
       router.push("/dashboard")
     }
   }, [userData, router])

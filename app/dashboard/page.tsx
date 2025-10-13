@@ -40,7 +40,6 @@ export default function DashboardPage() {
     const fetchData = async () => {
       const data = await getAllCardsData(userData?.uid);
       setCardsData(data as any[]);
-      console.log(data);
     };
     fetchData();
   }, [userData?.uid]);
