@@ -10,9 +10,11 @@ import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { UISettings } from "@/components/ui-settings"
 import { Bell, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react"
+import { useAuth } from "@/context/Auth"
 
 export default function ConfiguracoesPage() {
   const router = useRouter()
+  const { userData, isLoading } = useAuth()
   const [notifCampanhas, setNotifCampanhas] = useState(true)
   const [notifPropostas, setNotifPropostas] = useState(true)
   const [notifSaque, setNotifSaque] = useState(true)
@@ -26,13 +28,6 @@ export default function ConfiguracoesPage() {
   const [showConfirmarSenha, setShowConfirmarSenha] = useState(false)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-
-  useEffect(() => {
-    const token = localStorage.getItem("avantar_token")
-    if (!token) {
-      router.push("/login")
-    }
-  }, [router])
 
   const handleAlterarSenha = (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,11 +49,9 @@ export default function ConfiguracoesPage() {
     setConfirmarSenha("")
   }
 
-  const handleDesativarConta = () => {
+  const handleDesativarConta = async () => {
     // Aqui você faria a chamada à API para desativar a conta
     alert("Conta desativada com sucesso!")
-    localStorage.removeItem("avantar_token")
-    localStorage.removeItem("avantar_user")
     router.push("/login")
   }
 

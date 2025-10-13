@@ -24,18 +24,9 @@ import { AlertModal } from "@/components/alert-modal";
 import { getAllCardsData } from "@/services/dashboard/cards";
 import { fetchMonthPerformanceData, PerformanceData } from "@/services/dashboard/performance-of-month";
 
-interface User {
-  nome: string;
-  telefone: string;
-  email: string;
-  chavePix: string;
-  profilePicture: string;
-}
-
 export default function DashboardPage() {
   const router = useRouter();
-  const { userData } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
+  const { userData, isLoading } = useAuth();
   const [isIndicarModalOpen, setIsIndicarModalOpen] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
@@ -87,20 +78,8 @@ export default function DashboardPage() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("avantar_token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
-    const userData = localStorage.getItem("avantar_user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, [router]);
-
-  if (!user) {
+  // Mostra loading enquanto carrega os dados de autenticação
+  if (isLoading || !userData) {
     return (
       <div className="min-h-screen bg-white dark:bg-[#190d26] flex items-center justify-center">
         <div className="text-center">
@@ -113,7 +92,7 @@ export default function DashboardPage() {
     );
   }
 
-  const firstName = user.nome.split(" ")[0];
+  const firstName = userData.displayName.split(" ")[0];
 
   return (
     <>

@@ -87,7 +87,7 @@ export function Header({ userType }: HeaderProps) {
     <header
       className={cn(
         "sticky top-0 z-30 flex h-16 items-center gap-2 border-b backdrop-blur px-2 md:px-6",
-        "bg-white border-gray-200",
+        "bg-[#fff] border-gray-200",
         "dark:bg-[#190d26] dark:border-[#9093A0]/20"
       )}
     >

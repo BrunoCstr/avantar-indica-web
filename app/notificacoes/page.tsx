@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { Bell, CheckCheck, Clock, DollarSign, UserCheck, AlertCircle } from "lucide-react"
+import { useAuth } from "@/context/Auth"
 
 interface Notification {
   id: string
@@ -19,6 +20,7 @@ interface Notification {
 
 export default function NotificacoesPage() {
   const router = useRouter()
+  const { userData, isLoading } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
@@ -61,13 +63,6 @@ export default function NotificacoesPage() {
       read: true,
     },
   ])
-
-  useEffect(() => {
-    const token = localStorage.getItem("avantar_token")
-    if (!token) {
-      router.push("/login")
-    }
-  }, [router])
 
   const getIcon = (type: string) => {
     switch (type) {

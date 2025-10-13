@@ -8,32 +8,17 @@ import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { LogOut, Edit, User, Phone, CreditCard } from "lucide-react"
 import Link from "next/link"
-
-interface UserData {
-  nome: string
-  telefone: string
-  email: string
-  chavePix: string
-}
+import { useAuth } from "@/context/Auth"
 
 export default function PerfilPage() {
   const router = useRouter()
-  const [user, setUser] = useState<UserData | null>(null)
+  const { userData, isLoading, signOut } = useAuth()
 
-  useEffect(() => {
-    const userData = localStorage.getItem("avantar_user")
-    if (userData) {
-      setUser(JSON.parse(userData))
-    }
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem("avantar_token")
-    localStorage.removeItem("avantar_user")
-    router.push("/login")
+  const handleLogout = async () => {
+    await signOut()
   }
 
-  if (!user) {
+  if (isLoading || !userData) {
     return (
       <div className="min-h-screen bg-[#4A04A5] flex items-center justify-center">
         <div className="text-center">
@@ -102,7 +87,7 @@ export default function PerfilPage() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm text-gray-600 mb-1">Nome</p>
-                  <p className="font-bold text-[#4A04A5]">{user.nome}</p>
+                  <p className="font-bold text-[#4A04A5]">{userData.displayName}</p>
                 </div>
               </div>
 
@@ -112,7 +97,7 @@ export default function PerfilPage() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm text-gray-600 mb-1">Telefone</p>
-                  <p className="font-bold text-[#4A04A5]">{user.telefone}</p>
+                  <p className="font-bold text-[#4A04A5]">{userData.phone}</p>
                 </div>
               </div>
             </div>
@@ -131,7 +116,7 @@ export default function PerfilPage() {
               </div>
               <div className="flex-1">
                 <p className="text-sm text-gray-600 mb-1">Chave pix</p>
-                <p className="font-bold text-[#4A04A5]">{user.chavePix}</p>
+                <p className="font-bold text-[#4A04A5]">{userData.pixKey || "Não cadastrada"}</p>
               </div>
             </div>
           </div>
