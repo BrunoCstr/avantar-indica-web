@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
@@ -11,6 +11,14 @@ import { PageContainer, PageBackground } from "@/components/page-container"
 import { UISettings } from "@/components/ui-settings"
 import { Bell, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/context/Auth"
+import { Spinner } from "@/components/Spinner"
+import {
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  changeUserPassword,
+  deactivateAccount,
+  NotificationPreferences,
+} from "@/services/settings/settings"
 
 export default function ConfiguracoesPage() {
   const router = useRouter()
@@ -18,6 +26,17 @@ export default function ConfiguracoesPage() {
   const [notifCampanhas, setNotifCampanhas] = useState(true)
   const [notifPropostas, setNotifPropostas] = useState(true)
   const [notifSaque, setNotifSaque] = useState(true)
+
+  const [loadingPrefs, setLoadingPrefs] = useState(false)
+  const [loadingPassword, setLoadingPassword] = useState(false)
+  const [loadingDeactivate, setLoadingDeactivate] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const [modalMessage, setModalMessage] = useState({
+    title: "",
+    description: "",
+  })
+  const [showModal, setShowModal] = useState(false)
 
   const [senhaAtual, setSenhaAtual] = useState("")
   const [novaSenha, setNovaSenha] = useState("")
@@ -29,30 +48,144 @@ export default function ConfiguracoesPage() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-  const handleAlterarSenha = (e: React.FormEvent) => {
+  // Carregar preferências de notificação
+  useEffect(() => {
+    const loadPreferences = async () => {
+      if (!userData?.uid) return
+      try {
+        const prefs = await getNotificationPreferences(userData.uid)
+        setNotifCampanhas(prefs.campaigns)
+        setNotifPropostas(prefs.status)
+        setNotifSaque(prefs.withdraw)
+      } catch (error) {
+        console.error("Erro ao carregar preferências:", error)
+      }
+    }
+    loadPreferences()
+  }, [userData?.uid])
+
+  // Função do Pull Refresh
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    try {
+      if (userData?.uid) {
+        const prefs = await getNotificationPreferences(userData.uid)
+        setNotifCampanhas(prefs.campaigns)
+        setNotifPropostas(prefs.status)
+        setNotifSaque(prefs.withdraw)
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar configurações:", error)
+    } finally {
+      setRefreshing(false)
+    }
+  }, [userData?.uid])
+
+  const handleAlterarSenha = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (!senhaAtual || !novaSenha || !confirmarSenha) {
+      setModalMessage({
+        title: "Campos obrigatórios",
+        description: "Preencha todos os campos para alterar a senha.",
+      })
+      setShowModal(true)
+      return
+    }
+
     if (novaSenha !== confirmarSenha) {
-      alert("As senhas não coincidem!")
+      setModalMessage({
+        title: "Senhas diferentes",
+        description: "A nova senha e a confirmação não coincidem.",
+      })
+      setShowModal(true)
       return
     }
 
-    if (novaSenha.length < 6) {
-      alert("A nova senha deve ter no mínimo 6 caracteres!")
-      return
+    setLoadingPassword(true)
+    try {
+      await changeUserPassword(senhaAtual, novaSenha)
+      
+      setSenhaAtual("")
+      setNovaSenha("")
+      setConfirmarSenha("")
+      
+      setModalMessage({
+        title: "Sucesso",
+        description: "Senha alterada com sucesso!",
+      })
+      setShowModal(true)
+    } catch (error: any) {
+      setModalMessage({
+        title: "Erro",
+        description: error.message || "Erro ao alterar senha. Tente novamente.",
+      })
+      setShowModal(true)
+    } finally {
+      setLoadingPassword(false)
     }
+  }
 
-    // Aqui você faria a chamada à API para alterar a senha
-    alert("Senha alterada com sucesso!")
-    setSenhaAtual("")
-    setNovaSenha("")
-    setConfirmarSenha("")
+  const handleSaveNotificationPreferences = async () => {
+    if (!userData?.uid) return
+    setLoadingPrefs(true)
+    try {
+      await updateNotificationPreferences(userData.uid, {
+        campaigns: notifCampanhas,
+        status: notifPropostas,
+        withdraw: notifSaque,
+      })
+      setModalMessage({
+        title: "Sucesso",
+        description: "Preferências de notificação atualizadas!",
+      })
+      setShowModal(true)
+    } catch (error) {
+      setModalMessage({
+        title: "Erro",
+        description: "Não foi possível atualizar as preferências.",
+      })
+      setShowModal(true)
+    } finally {
+      setLoadingPrefs(false)
+    }
   }
 
   const handleDesativarConta = async () => {
-    // Aqui você faria a chamada à API para desativar a conta
-    alert("Conta desativada com sucesso!")
-    router.push("/login")
+    if (!userData?.uid) return
+    setLoadingDeactivate(true)
+    try {
+      await deactivateAccount(userData.uid)
+      setModalMessage({
+        title: "Conta desativada",
+        description: "Sua conta foi desativada com sucesso. Você será redirecionado para a tela de login.",
+      })
+      setShowModal(true)
+      // Redirecionar após um tempo
+      setTimeout(() => {
+        router.push("/login")
+      }, 2000)
+    } catch (error: any) {
+      setModalMessage({
+        title: "Erro",
+        description: "Não foi possível desativar a conta. Tente novamente.",
+      })
+      setShowModal(true)
+    } finally {
+      setLoadingDeactivate(false)
+      setShowDeleteModal(false)
+    }
+  }
+
+  if (isLoading || !userData) {
+    return (
+      <div className="min-h-screen bg-[#4A04A5] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#29F3DF] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-white mt-4">Carregando...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -68,7 +201,7 @@ export default function ConfiguracoesPage() {
             <BackButton />
           </div>
 
-          <h1 className="text-3xl font-bold text-white text-center mb-8">Configurações</h1>
+          <h1 className="text-3xl font-bold text-black dark:text-white text-center mb-8">Configurações</h1>
 
           {/* Seção de Configurações de Interface */}
           <div className="mb-6">
@@ -142,6 +275,17 @@ export default function ConfiguracoesPage() {
                       notifSaque ? "translate-x-7" : "translate-x-1"
                     }`}
                   />
+                </button>
+              </div>
+
+              {/* Botão Salvar Alterações */}
+              <div className="mt-4">
+                <button
+                  onClick={handleSaveNotificationPreferences}
+                  disabled={loadingPrefs}
+                  className="w-full bg-[#4A04A5] hover:bg-[#4A04A5]/90 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-2xl transition-colors flex items-center justify-center"
+                >
+                  {loadingPrefs ? <Spinner variant="blue" /> : "Salvar Alterações"}
                 </button>
               </div>
             </div>
@@ -225,9 +369,10 @@ export default function ConfiguracoesPage() {
 
               <button
                 type="submit"
-                className="w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 text-[#170138] font-bold py-4 px-6 rounded-2xl transition-colors"
+                disabled={loadingPassword}
+                className="w-full bg-[#29F3DF] hover:bg-[#29F3DF]/90 disabled:opacity-50 text-[#170138] font-bold py-4 px-6 rounded-2xl transition-colors flex items-center justify-center"
               >
-                Alterar Senha
+                {loadingPassword ? <Spinner /> : "Alterar Senha"}
               </button>
             </form>
           </div>
@@ -235,10 +380,10 @@ export default function ConfiguracoesPage() {
           {/* Seção de Desativar Conta */}
           <div className="bg-white rounded-3xl p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
+              <div className="w-10 h-10 rounded-xl bg-red/10 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red" />
               </div>
-              <h2 className="text-xl font-bold text-red-500">Zona de Perigo</h2>
+              <h2 className="text-xl font-bold text-red">Zona de Perigo</h2>
             </div>
 
             <p className="text-gray-600 mb-4">
@@ -248,9 +393,10 @@ export default function ConfiguracoesPage() {
 
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-6 rounded-2xl transition-colors"
+              disabled={loadingDeactivate}
+              className="w-full bg-red hover:bg-red-600 disabled:opacity-50 text-white font-bold py-4 px-6 rounded-2xl transition-colors flex items-center justify-center"
             >
-              Desativar Conta
+              {loadingDeactivate ? <Spinner /> : "Desativar Conta"}
             </button>
           </div>
         </div>
@@ -258,18 +404,36 @@ export default function ConfiguracoesPage() {
         <BottomNav />
       </PageContainer>
 
-      {/* Modal de Confirmação */}
+      {/* Modal de Sucesso/Erro */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full">
+            <div className="w-16 h-16 rounded-full bg-[#4A04A5]/10 flex items-center justify-center mx-auto mb-4">
+              <Bell className="w-8 h-8 text-[#4A04A5]" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#4A04A5] text-center mb-2">{modalMessage.title}</h3>
+            <p className="text-gray-600 text-center mb-6">{modalMessage.description}</p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="w-full bg-[#4A04A5] hover:bg-[#4A04A5]/90 text-white font-bold py-3 px-6 rounded-2xl transition-colors"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Desativação */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl p-6 max-w-md w-full">
-            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-8 h-8 text-red-500" />
+            <div className="w-16 h-16 rounded-full bg-red/10 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-8 h-8 text-red" />
             </div>
 
             <h3 className="text-2xl font-bold text-[#4A04A5] text-center mb-2">Desativar Conta?</h3>
             <p className="text-gray-600 text-center mb-6">
-              Tem certeza que deseja desativar sua conta? Esta ação não pode ser desfeita e você perderá acesso a todas
-              as suas informações.
+              Tem certeza que deseja desativar sua conta? Caso se arrependa, você poderá reativar sua conta em até 30 dias entrando em contato com a unidade afiliada.
             </p>
 
             <div className="flex gap-3">
@@ -281,9 +445,10 @@ export default function ConfiguracoesPage() {
               </button>
               <button
                 onClick={handleDesativarConta}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-2xl transition-colors"
+                disabled={loadingDeactivate}
+                className="flex-1 bg-red hover:bg-red-600 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-2xl transition-colors flex items-center justify-center"
               >
-                Desativar
+                {loadingDeactivate ? <Spinner /> : "Desativar"}
               </button>
             </div>
           </div>

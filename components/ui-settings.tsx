@@ -12,7 +12,7 @@ export function UISettings() {
   const { sidebarCollapsed, theme, updateSidebarCollapsed, updateTheme } = useUISettings();
 
   return (
-    <Card>
+    <Card className="bg-white rounded-3xl">
       <CardHeader>
         <CardTitle>Configurações de Interface</CardTitle>
         <CardDescription>
@@ -32,6 +32,7 @@ export function UISettings() {
             <Switch
               checked={sidebarCollapsed}
               onCheckedChange={updateSidebarCollapsed}
+              className="data-[state=checked]:bg-[#4A04A5]"
             />
           </div>
         </div>
@@ -50,7 +51,11 @@ export function UISettings() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Button
               variant={theme === "light" ? "default" : "outline"}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                theme === "light" 
+                  ? "bg-[#4A04A5] hover:bg-[#4A04A5]/90 text-white" 
+                  : "hover:bg-[#4A04A5]/10 hover:text-[#4A04A5]"
+              }`}
               onClick={() => updateTheme("light")}
             >
               <Sun className="h-5 w-5" />
@@ -59,7 +64,11 @@ export function UISettings() {
             
             <Button
               variant={theme === "dark" ? "default" : "outline"}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                theme === "dark" 
+                  ? "bg-[#4A04A5] hover:bg-[#4A04A5]/90 text-white" 
+                  : "hover:bg-[#4A04A5]/10 hover:text-[#4A04A5]"
+              }`}
               onClick={() => updateTheme("dark")}
             >
               <Moon className="h-5 w-5" />
@@ -68,7 +77,11 @@ export function UISettings() {
             
             <Button
               variant={theme === "system" ? "default" : "outline"}
-              className="h-auto p-4 flex flex-col items-center gap-2"
+              className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                theme === "system" 
+                  ? "bg-[#4A04A5] hover:bg-[#4A04A5]/90 text-white" 
+                  : "hover:bg-[#4A04A5]/10 hover:text-[#4A04A5]"
+              }`}
               onClick={() => updateTheme("system")}
             >
               <Monitor className="h-5 w-5" />

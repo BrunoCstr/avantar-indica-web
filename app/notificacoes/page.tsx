@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
@@ -8,61 +8,56 @@ import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
 import { Bell, CheckCheck, Clock, DollarSign, UserCheck, AlertCircle } from "lucide-react"
 import { useAuth } from "@/context/Auth"
+import { Spinner } from "@/components/Spinner"
+import {
+  getNotifications,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
+} from "@/services/notifications/notifications"
 
-interface Notification {
-  id: string
-  type: "campanha" | "proposta" | "saque" | "sistema"
-  title: string
-  message: string
-  date: string
-  read: boolean
+interface NotificationItem {
+  notificationId: string
+  type?: "campanha" | "proposta" | "saque" | "sistema"
+  title?: string
+  body?: string
+  read?: boolean
+  createdAt?: any
 }
 
 export default function NotificacoesPage() {
   const router = useRouter()
   const { userData, isLoading } = useAuth()
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      type: "proposta",
-      title: "Proposta Fechada",
-      message: "Sua indicação para João Silva foi fechada com sucesso! Comissão de R$ 700,00 disponível.",
-      date: "2025-10-08T10:30:00",
-      read: false,
-    },
-    {
-      id: "2",
-      type: "saque",
-      title: "Saque Aprovado",
-      message: "Seu saque de R$ 1.500,00 foi aprovado e será processado em até 2 dias úteis.",
-      date: "2025-10-07T15:45:00",
-      read: false,
-    },
-    {
-      id: "3",
-      type: "campanha",
-      title: "Nova Campanha Disponível",
-      message: "Campanha especial de outubro com 50% de bônus em todas as indicações!",
-      date: "2025-10-06T09:00:00",
-      read: true,
-    },
-    {
-      id: "4",
-      type: "proposta",
-      title: "Proposta em Análise",
-      message: "A proposta de Maria Santos está em análise pela equipe comercial.",
-      date: "2025-10-05T14:20:00",
-      read: true,
-    },
-    {
-      id: "5",
-      type: "sistema",
-      title: "Atualização do Sistema",
-      message: "O aplicativo foi atualizado com novas funcionalidades. Confira as novidades!",
-      date: "2025-10-04T08:00:00",
-      read: true,
-    },
-  ])
+
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const [loadingPage, setLoadingPage] = useState(true)
+  const [cursor, setCursor] = useState<any | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+
+  const pageSize = 20
+
+  const fetchAndMarkAsRead = useCallback(async () => {
+    if (!userData?.uid) return
+    setLoadingPage(true)
+    try {
+      const { data, cursor, hasMore } = await getNotifications(userData.uid, pageSize, null)
+      setNotifications(data)
+      setCursor(cursor)
+      setHasMore(hasMore)
+
+      // marca todas como lidas ao abrir, como no app RN
+      await markAllNotificationsAsRead(userData.uid)
+      // reflete imediatamente no estado
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+    } catch (error) {
+      console.error("Erro ao carregar notificações:", error)
+    } finally {
+      setLoadingPage(false)
+    }
+  }, [userData?.uid])
+
+  useEffect(() => {
+    fetchAndMarkAsRead()
+  }, [fetchAndMarkAsRead])
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -94,8 +89,8 @@ export default function NotificacoesPage() {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatDate = (dateInput: any) => {
+    const date = dateInput?.toDate ? dateInput.toDate() : new Date(dateInput)
     const now = new Date()
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
 
@@ -105,12 +100,22 @@ export default function NotificacoesPage() {
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
   }
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)))
+  const markAsRead = async (notificationId: string) => {
+    if (!userData?.uid) return
+    setNotifications((prev) => prev.map((n) => (n.notificationId === notificationId ? { ...n, read: true } : n)))
+    try {
+      await markNotificationAsRead(userData.uid, notificationId)
+    } catch (e) {
+      // silencia e mantém otimista
+    }
   }
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })))
+  const markAllAsRead = async () => {
+    if (!userData?.uid) return
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+    try {
+      await markAllNotificationsAsRead(userData.uid)
+    } catch (e) {}
   }
 
   const unreadCount = notifications.filter((n) => !n.read).length
@@ -156,43 +161,49 @@ export default function NotificacoesPage() {
           </div>
 
           {/* Lista de Notificações */}
-          <div className="space-y-4">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                onClick={() => markAsRead(notification.id)}
-                className={`bg-white rounded-2xl p-5 shadow-sm border-2 transition-all cursor-pointer hover:shadow-md ${
-                  notification.read ? "border-transparent" : "border-[#29F3DF]"
-                }`}
-              >
-                <div className="flex gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${getIconColor(notification.type)}`}
-                  >
-                    {getIcon(notification.type)}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <h3 className={`font-bold ${notification.read ? "text-gray-700" : "text-[#4A04A5]"}`}>
-                        {notification.title}
-                      </h3>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {formatDate(notification.date)}
-                        </span>
-                        {!notification.read && <div className="w-2 h-2 rounded-full bg-[#29F3DF]" />}
-                      </div>
+          {loadingPage ? (
+            <div className="flex justify-center py-12">
+              <Spinner />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.notificationId}
+                  onClick={() => markAsRead(notification.notificationId)}
+                  className={`bg-white rounded-2xl p-5 shadow-sm border-2 transition-all cursor-pointer hover:shadow-md ${
+                    notification.read ? "border-transparent" : "border-[#29F3DF]"
+                  }`}
+                >
+                  <div className="flex gap-4">
+                    <div
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${getIconColor(notification.type || "sistema")}`}
+                    >
+                      {getIcon(notification.type || "sistema")}
                     </div>
-                    <p className={`text-sm ${notification.read ? "text-gray-500" : "text-gray-700"}`}>
-                      {notification.message}
-                    </p>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h3 className={`font-bold ${notification.read ? "text-gray-700" : "text-[#4A04A5]"}`}>
+                          {notification.title || "Notificação"}
+                        </h3>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {notification.createdAt ? formatDate(notification.createdAt) : ""}
+                          </span>
+                          {!notification.read && <div className="w-2 h-2 rounded-full bg-[#29F3DF]" />}
+                        </div>
+                      </div>
+                      <p className={`text-sm ${notification.read ? "text-gray-500" : "text-gray-700"}`}>
+                        {notification.body || ""}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Estado Vazio */}
           {notifications.length === 0 && (
