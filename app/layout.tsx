@@ -5,6 +5,7 @@ import "./globals.css"
 import { AuthProvider } from "@/context/Auth"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import InstallBanner from "@/components/InstallBanner"
 
 const familjenGrotesk = Familjen_Grotesk({ 
   subsets: ["latin"], 
@@ -15,6 +16,16 @@ export const metadata: Metadata = {
   title: "Avantar Indica",
   description: "O Avantar Indica é o aplicativo oficial da Rede Avantar, desenvolvido para que você possa transformar suas indicações em recompensas reais! Indique amigos, familiares ou contatos para fechar seguros, consórcios ou planos de saúde e receba cashback em produtos ou comissão em dinheiro, de forma rápida, simples e segura.",
   manifest: "/manifest.json",
+  other: {
+    // Smart Banner iOS
+    'apple-itunes-app': 'app-id=6749894670',
+    
+    // PWA configs
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+    'apple-mobile-web-app-title': 'Avantar'
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -66,6 +77,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <InstallBanner/>
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

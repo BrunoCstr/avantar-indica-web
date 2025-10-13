@@ -176,8 +176,8 @@ export default function StatusPage() {
 
             {/* Cards de estatísticas */}
             <div className="flex gap-3 mb-6">
-              <div className="flex-1 bg-white dark:bg-[#190d26] rounded-xl p-4 border border-blue-500/20">
-                <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold mb-1">
+              <div className="flex-1 bg-white dark:bg-[#190d26] rounded-xl p-4 border border-blue/20">
+                <p className="text-gray-600 dark:text-gray text-xs font-semibold mb-1">
                   Total
                 </p>
                 <p className="text-black dark:text-white text-xl font-bold">
@@ -185,11 +185,11 @@ export default function StatusPage() {
                 </p>
               </div>
 
-              <div className="flex-1 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-500/20">
-                <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold mb-1">
+              <div className="flex-1 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green/20">
+                <p className="text-gray-600 dark:text-gray text-xs font-semibold mb-1">
                   Processadas
                 </p>
-                <p className="text-green-600 dark:text-green-400 text-xl font-bold">
+                <p className="text-green-600 dark:text-green text-xl font-bold">
                   {selectedBulk.processed || 0}
                 </p>
               </div>
@@ -198,7 +198,7 @@ export default function StatusPage() {
             {/* Card de data */}
             {selectedBulk.updatedAt && (
               <div className="mb-5">
-                <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold">
+                <p className="text-gray-600 dark:text-gray text-xs font-semibold">
                   Enviado {selectedBulk.updatedAt}
                 </p>
               </div>
@@ -218,9 +218,9 @@ export default function StatusPage() {
               }`}>
                 <p className={`text-base font-medium ${
                   selectedBulk.status === 'Em Andamento'
-                    ? 'text-orange-600 dark:text-orange-400'
+                    ? 'text-orange-600 dark:text-orange'
                     : selectedBulk.status === 'Concluído'
-                      ? 'text-green-600 dark:text-green-400'
+                      ? 'text-green-600 dark:text-green'
                       : 'text-gray-700 dark:text-gray-300'
                 }`}>
                   {selectedBulk.status}
@@ -260,7 +260,7 @@ export default function StatusPage() {
               ) : (
                 <div className="bg-white dark:bg-[#190d26] rounded-lg p-4 border border-[#4A04A5]/10 text-center">
                   <Clipboard className="w-6 h-6 text-[#4A04A5] mx-auto mb-2 opacity-70" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray">
                     Nenhuma indicação encontrada neste lote.
                   </p>
                 </div>
@@ -278,7 +278,7 @@ export default function StatusPage() {
 
     return (
       <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-        <DialogContent className="max-w-md border-0">
+        <DialogContent className="max-w-md border-0 bg-white dark:bg-[#190d26]">
           <DialogHeader className="bg-[#4A04A5] -m-6 mb-6 p-6 rounded-t-lg border-b-4 border-[#C352F2]">
             <DialogTitle className="text-white text-xl">
               Detalhes da {selectedDetail.type === 'opportunity' ? 'Oportunidade' : 'Indicação'}
@@ -289,7 +289,7 @@ export default function StatusPage() {
             {/* Card de data */}
             {selectedDetail.updatedAt && (
               <div className="mb-5">
-                <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold">
+                <p className="text-gray-600 dark:text-gray text-xs font-semibold">
                   Última atualização: {selectedDetail.updatedAt}
                 </p>
               </div>
@@ -342,7 +342,7 @@ export default function StatusPage() {
               <p className="text-[#820AD1] dark:text-[#C352F2] text-sm font-semibold mb-2">
                 {selectedDetail.type === 'opportunity' ? 'Tipo: Oportunidade' : 'Tipo: Indicação'}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray">
                 {selectedDetail.type === 'opportunity'
                   ? 'Esta é uma oportunidade de negócio identificada, ou seja, o lead já está interessado em adquirir o produto.'
                   : 'O tipo ainda está como indicação, isso significa que ou está pendente o contato, ou o contato foi realizado e está aguardando a resposta do lead.'}
@@ -491,11 +491,11 @@ export default function StatusPage() {
                             <h3 className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white text-base">
                               Lote em massa
                             </h3>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                            <span className="text-xs text-black dark:text-gray ml-2">
                               {item.updatedAt}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          <p className="text-sm text-black dark:text-white mb-2">
                             {item.product}
                           </p>
                           <div className="flex items-center justify-between">
@@ -542,11 +542,11 @@ export default function StatusPage() {
                           <h3 className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white text-base">
                             {limitText(item.name)}
                           </h3>
-                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          <span className="text-xs text-black dark:text-gray ml-2">
                             {item.updatedAt}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <p className="text-sm text-black dark:text-gray mb-2">
                           {item.product}
                         </p>
                         <div className="flex items-center justify-between">

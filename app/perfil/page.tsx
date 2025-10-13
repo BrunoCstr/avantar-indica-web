@@ -6,7 +6,7 @@ import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
-import { LogOut, Edit, User, Phone, CreditCard, Upload } from "lucide-react"
+import { LogOut, User, Phone, CreditCard, Upload } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/context/Auth"
 import { doc, onSnapshot, updateDoc } from "firebase/firestore"
@@ -144,10 +144,10 @@ export default function PerfilPage() {
 
         <div className="relative z-10 p-6">
           <div className="mb-6 flex items-center justify-between lg:hidden">
-            <BackButton />
+            <BackButton bgColor="purple"/>
             <button
               onClick={handleLogout}
-              className="w-8 h-8 rounded-sm border-2 border-red-500 text-red-500 hover:bg-red-500/10 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-sm border-2 border-red text-red hover:bg-red/10 flex items-center justify-center transition-colors"
             >
               <LogOut className="w-5 h-5" />
             </button>
@@ -213,7 +213,7 @@ export default function PerfilPage() {
                     <input
                       value={editedName}
                       onChange={(e) => setEditedName(e.target.value)}
-                      className={`w-full px-3 py-2 rounded-lg border ${isNameValid() ? "border-gray-300" : "border-red-500"}`}
+                      className={`w-full px-3 py-2 rounded-lg border ${isNameValid() ? "border-gray-300" : "border-red"}`}
                     />
                   ) : (
                     <p className="font-bold text-[#4A04A5]">{userData.displayName}</p>
@@ -231,7 +231,7 @@ export default function PerfilPage() {
                     <input
                       value={editedPhone}
                       onChange={(e) => validatePhoneFree(e.target.value)}
-                      className={`w-full px-3 py-2 rounded-lg border ${isPhoneValid() ? "border-gray-300" : "border-red-500"}`}
+                      className={`w-full px-3 py-2 rounded-lg border ${isPhoneValid() ? "border-gray-300" : "border-red"}`}
                     />
                   ) : (
                     <p className="font-bold text-[#4A04A5]">{userData.phone ? applyMaskTelephone(userData.phone) : "Não cadastrado"}</p>
@@ -271,7 +271,7 @@ export default function PerfilPage() {
                   <input
                     value={editedPixKey}
                     onChange={(e) => setEditedPixKey(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-lg border ${isPixValid() ? "border-gray-300" : "border-red-500"}`}
+                    className={`w-full px-3 py-2 rounded-lg border ${isPixValid() ? "border-gray-300" : "border-red"}`}
                   />
                 ) : (
                   <p className="font-bold text-[#4A04A5]">{userData.pixKey || "Não cadastrada"}</p>

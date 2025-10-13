@@ -90,8 +90,9 @@ type SellerCreateFormData = z.infer<typeof sellerSignUpSchema>
 type SellerEditFormData = z.infer<typeof sellerEditSchema>
 
 export default function VendedoresPage() {
-  const { userData } = useAuth()
+  const { userData, isLoading: authLoading } = useAuth()
   const router = useRouter()
+  
   const [busca, setBusca] = useState("")
   const [vendedores, setVendedores] = useState<Seller[]>([])
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([])
@@ -152,10 +153,14 @@ export default function VendedoresPage() {
 
   // Verificar permissões
   useEffect(() => {
+    console.log("Vendedores - userData:", userData)
+    console.log("Vendedores - userData.rule:", userData?.rule)
+    
     if (
       userData &&
       !["parceiro_indicador", "admin_franqueadora", "admin_unidade"].includes(userData.rule)
     ) {
+      console.log("Usuário sem permissão para vendedores, redirecionando para dashboard")
       router.push("/dashboard")
     }
   }, [userData, router])
@@ -369,6 +374,18 @@ export default function VendedoresPage() {
   }
 
   const vendedoresFiltrados = filteredSellers
+
+  // Mostrar loading enquanto verifica autenticação
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#190d26]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A04A5] mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Verificando permissões...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
