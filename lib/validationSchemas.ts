@@ -75,7 +75,7 @@ export const indicationSchema = z.object({
     }, 'Telefone deve ter 11 dígitos (DDD + número)'),
   product: z
     .string()
-    .min(1, 'Selecione um produto'),
+    .optional(),
   observations: z
     .string()
     .optional(),
@@ -104,7 +104,7 @@ export const multiIndicationSchema = z.object({
     }, 'Telefone deve ter 11 dígitos (DDD + número)'),
   product: z
     .string()
-    .min(1, 'Selecione um produto'),
+    .optional(),
   observations: z
     .string()
     .optional(),

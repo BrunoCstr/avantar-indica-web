@@ -46,30 +46,17 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
     },
   });
 
-  // Buscar produtos ao abrir o modal
+  // Carrega os produtos quando o modal é aberto
   useEffect(() => {
     if (isOpen) {
-      loadProducts();
-    }
-  }, [isOpen]);
-
-  const loadProducts = async () => {
-    try {
-      setIsLoadingProducts(true);
-      const productsList = await fetchProducts();
-      setProducts(productsList);
-    } catch (error: any) {
-      setAlertMessage({
-        title: "Erro ao carregar produtos",
-        description:
-          error.message ||
-          "Não foi possível carregar os produtos. Tente novamente.",
-      });
-      setShowAlertModal(true);
-    } finally {
+      setProducts([
+        { name: "Seguro" },
+        { name: "Consórcio" },
+        { name: "Plano de Saúde" },
+      ]);
       setIsLoadingProducts(false);
     }
-  };
+  }, [isOpen]);
 
   const onSubmit = async (data: IndicationSchema) => {
     // Verifica se o usuário tem permissão para indicar

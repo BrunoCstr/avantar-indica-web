@@ -15,7 +15,6 @@ import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { multiIndicationSchema, MultiIndicationSchema } from "@/lib/validationSchemas"
 import { 
-  fetchProducts, 
   submitMultipleIndications, 
   getSubmitResultMessage,
   Product,
@@ -68,26 +67,15 @@ export default function IndicarMultiplosPage() {
     }
   }, [userData, router])
 
-  // Buscar produtos ao carregar a página
+  // Carregar produtos estáticos
   useEffect(() => {
-    loadProducts()
+    setProducts([
+      { name: "Seguro" },
+      { name: "Consórcio" },
+      { name: "Plano de Saúde" },
+    ])
+    setIsLoadingProducts(false)
   }, [])
-
-  const loadProducts = async () => {
-    try {
-      setIsLoadingProducts(true)
-      const productsList = await fetchProducts()
-      setProducts(productsList)
-    } catch (error: any) {
-      setAlertMessage({
-        title: "Erro ao carregar produtos",
-        description: error.message || "Não foi possível carregar os produtos. Tente novamente.",
-      })
-      setShowAlertModal(true)
-    } finally {
-      setIsLoadingProducts(false)
-    }
-  }
 
   const formatPhoneNumber = (value: string) => {
     const numbers = value.replace(/\D/g, "")
