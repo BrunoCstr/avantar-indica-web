@@ -21,6 +21,7 @@ import {
   canWithdraw,
   type WithdrawalRequest 
 } from "@/services/wallet/withdrawals"
+import { getMinWithdrawal } from "@/services/units/units"
 
 export default function CarteiraPage() {
   const { userData } = useAuth()
@@ -42,6 +43,7 @@ export default function CarteiraPage() {
     pendingWithdrawals: 0,
     totalReceived: 0,
   })
+  const [minWithdrawal, setMinWithdrawal] = useState(700)
 
   const isLoading = isLoadingBalance
 
@@ -85,9 +87,21 @@ export default function CarteiraPage() {
       }
     }
 
+    const fetchMinWithdrawal = async () => {
+      try {
+        if (userData.affiliated_to) {
+          const minWithdrawalValue = await getMinWithdrawal(userData.affiliated_to)
+          setMinWithdrawal(minWithdrawalValue)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar valor mínimo de saque:', error)
+      }
+    }
+
     fetchData()
     fetchBalance()
     fetchWithdrawalSummary()
+    fetchMinWithdrawal()
 
     // Inscrever para atualizações em tempo real (opcional)
     const unsubscribeBalance = subscribeToUserBalance(
@@ -142,7 +156,7 @@ export default function CarteiraPage() {
 
   async function handleWithdrawalRequest() {
     // Verificar se o usuário tem chave PIX cadastrada
-    if (!userData?.pixKey || (userData.pixKey && userData.pixKey.trim() === '')) {
+    if (!userData?.pixKey || (userData.pixKey && userData.pixKey.trim() === '' && userData.pixKey !== 'Não cadastrado')) {
       setModalMessage({
         title: 'Chave PIX não cadastrada',
         description:
@@ -152,12 +166,12 @@ export default function CarteiraPage() {
       return
     }
 
-    if (balance >= 700) {
+    if (balance >= minWithdrawal) {
       setShowWithdrawalModal(true)
     } else {
       setModalMessage({
         title: 'Saldo insuficiente',
-        description: `O saldo em sua carteira precisa ser no mínimo R$ 700,00 para realizar o saque!`,
+        description: `O saldo em sua carteira precisa ser no mínimo R$ ${minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} para realizar o saque!`,
       })
       setIsModalVisible(true)
     }
@@ -182,7 +196,7 @@ export default function CarteiraPage() {
       }
 
       // Criar a solicitação no banco de dados
-      await createWithdrawalRequest(withdrawalData)
+      await createWithdrawalRequest(withdrawalData, minWithdrawal)
 
       setModalMessage({
         title: 'Saque solicitado',
@@ -243,8 +257,8 @@ export default function CarteiraPage() {
 
   const handleSaque = () => {
     const valor = Number.parseFloat(valorSaque)
-    if (valor < 700) {
-      alert("Valor mínimo para saque é R$ 700,00")
+    if (valor < minWithdrawal) {
+      alert(`Valor mínimo para saque é R$ ${minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
       return
     }
     if (valor > balance) {
@@ -585,7 +599,7 @@ export default function CarteiraPage() {
                   <ul className="text-xs text-black dark:text-gray space-y-2">
                     <li className="flex items-start gap-2">
                       <span className="text-[#29F3DF] mt-1">•</span>
-                      <span>Valor mínimo para saque: R$ 700,00</span>
+                      <span>Valor mínimo para saque: R$ {minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-[#29F3DF] mt-1">•</span>
@@ -667,21 +681,21 @@ export default function CarteiraPage() {
                     placeholder="0,00"
                     className="bg-transparent text-white text-4xl font-bold text-center outline-none w-full"
                     step="0.01"
-                    min="700"
+                    min={minWithdrawal}
                   />
                 </div>
               </div>
-              <p className="text-white text-xs text-center mt-2">Valor mínimo: R$ 700,00</p>
+              <p className="text-white text-xs text-center mt-2">Valor mínimo: R$ {minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
 
             <div className="mb-6">
               <p className="text-white mb-3">Valores rápidos</p>
               <div className="grid grid-cols-3 gap-3">
                 <button
-                  onClick={() => adicionarValor(700)}
+                  onClick={() => adicionarValor(minWithdrawal)}
                   className="bg-[#4A04A5] hover:bg-[#4A04A5]/80 text-white font-bold py-3 px-3 rounded-xl transition-colors text-sm"
                 >
-                  +R$ 700
+                  +R$ {minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </button>
                 <button
                   onClick={() => adicionarValor(1000)}
@@ -718,7 +732,7 @@ export default function CarteiraPage() {
 
             <div className="bg-[#4A04A5]/50 rounded-2xl p-4 mb-6">
               <ul className="text-white text-sm space-y-2">
-                <li>• Valor mínimo para saque: R$ 700,00.</li>
+                <li>• Valor mínimo para saque: R$ {minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</li>
                 <li>• O saque será processado pela sua unidade.</li>
                 <li>• Você receberá uma notificação no APP e em seu e-mail quando o pagamento for realizado.</li>
               </ul>
@@ -726,7 +740,7 @@ export default function CarteiraPage() {
 
             <button
               onClick={handleSaque}
-              disabled={!valorSaque || Number.parseFloat(valorSaque) < 700 || isLoadingButton}
+              disabled={!valorSaque || Number.parseFloat(valorSaque) < minWithdrawal || isLoadingButton}
               className="w-full bg-[#C352F2] hover:bg-[#C352F2]/90 disabled:bg-[#C352F2]/30 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-2xl transition-colors text-lg"
             >
               {isLoadingButton ? (

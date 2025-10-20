@@ -109,7 +109,8 @@ export interface CreateWithdrawalRequest {
  * @returns Promise com o ID da solicitação criada
  */
 export async function createWithdrawalRequest(
-  withdrawalData: CreateWithdrawalRequest
+  withdrawalData: CreateWithdrawalRequest,
+  minWithdrawal: number = 700
 ): Promise<string> {
   try {
     if (!withdrawalData.userId) {
@@ -122,8 +123,8 @@ export async function createWithdrawalRequest(
     }
 
     // Verificar se o valor é válido
-    if (withdrawalData.amount < 700) {
-      throw new Error('Valor mínimo para saque é R$ 700,00');
+    if (withdrawalData.amount < minWithdrawal) {
+      throw new Error(`Valor mínimo para saque é R$ ${minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
     }
 
     const userDocRef = doc(db, 'users', withdrawalData.userId);
@@ -239,7 +240,8 @@ export function subscribeToUserWithdrawals(
 export function canWithdraw(
   balance: number,
   amount: number,
-  pixKey: string | null | undefined
+  pixKey: string | null | undefined,
+  minWithdrawal: number = 700
 ): { canWithdraw: boolean; reason?: string } {
   // Verificar chave PIX
   if (!pixKey || pixKey.trim() === '') {
@@ -250,10 +252,10 @@ export function canWithdraw(
   }
 
   // Verificar valor mínimo
-  if (amount < 700) {
+  if (amount < minWithdrawal) {
     return {
       canWithdraw: false,
-      reason: 'Valor mínimo para saque é R$ 700,00',
+      reason: `Valor mínimo para saque é R$ ${minWithdrawal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
     };
   }
 
