@@ -4,7 +4,10 @@ import {
   where, 
   onSnapshot,
   Unsubscribe,
-  Timestamp 
+  Timestamp,
+  doc,
+  updateDoc,
+  serverTimestamp
 } from 'firebase/firestore';
 import { db } from '@/lib/firebaseConfig';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
@@ -193,10 +196,11 @@ export function subscribeToStatusItems(
               processed: data.processed || 0,
               packagedIndicationId: data.packagedIndicationId,
               unitName: data.unitName,
+              trash: data.trash,
               archived: data.archived,
             };
           })
-          .filter((item) => item.archived !== true);
+          .filter((item) => item.trash !== true && item.archived !== true);
         
         updateAndSort();
       },
@@ -269,14 +273,26 @@ export function filterStatusItems(
 /**
  * Calcula estatísticas dos itens de status
  * Retorna um objeto com a contagem de itens por status
+ * Inclui indicações individuais dos packagedIndications
  */
 export function getStatusStats(items: UnifiedStatusItem[]): StatusStats {
   const stats: StatusStats = {};
 
   items.forEach((item) => {
+    // Conta o item principal
     const status = item.status;
     if (status) {
       stats[status] = (stats[status] || 0) + 1;
+    }
+
+    // Se for um lote em massa, conta as indicações individuais
+    if (item.type === 'bulk' && item.indications && Array.isArray(item.indications)) {
+      item.indications.forEach((indication: any) => {
+        // Só conta se não foi convertida para oportunidade (sent !== true)
+        if (indication.sent !== true && indication.status) {
+          stats[indication.status] = (stats[indication.status] || 0) + 1;
+        }
+      });
     }
   });
 
@@ -383,5 +399,69 @@ export function formatPhoneForDisplay(phone: string): string {
   }
   
   return phone;
+}
+
+/**
+ * Exclui uma indicação (marca como trash=true)
+ * Só permite exclusão se o status for "PENDENTE CONTATO"
+ */
+export async function deleteIndication(indicationId: string): Promise<void> {
+  try {
+    const indicationRef = doc(db, 'indications', indicationId);
+    await updateDoc(indicationRef, {
+      trash: true,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Erro ao excluir indicação:', error);
+    throw error;
+  }
+}
+
+/**
+ * Exclui uma oportunidade (marca como trash=true)
+ * Só permite exclusão se o status for "PENDENTE CONTATO"
+ */
+export async function deleteOpportunity(opportunityId: string): Promise<void> {
+  try {
+    const opportunityRef = doc(db, 'opportunities', opportunityId);
+    await updateDoc(opportunityRef, {
+      trash: true,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Erro ao excluir oportunidade:', error);
+    throw error;
+  }
+}
+
+/**
+ * Exclui um lote em massa (marca como trash=true)
+ * Só permite exclusão se não tiver nenhum item processado e todos os itens estiverem pendentes
+ */
+export async function deletePackagedIndication(packagedIndicationId: string): Promise<void> {
+  try {
+    const packagedRef = doc(db, 'packagedIndications', packagedIndicationId);
+    await updateDoc(packagedRef, {
+      trash: true,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Erro ao excluir lote em massa:', error);
+    throw error;
+  }
+}
+
+/**
+ * Verifica se um item pode ser excluído baseado nas regras de negócio
+ */
+export function canDeleteItem(item: UnifiedStatusItem): boolean {
+  if (item.type === 'bulk') {
+    // Para lotes em massa: só pode excluir se não tiver nenhum item processado e todos os itens estiverem pendentes
+    return (item.processed || 0) === 0 && (item.total || 0) > 0;
+  } else {
+    // Para indicações e oportunidades: só pode excluir se o status for "PENDENTE CONTATO"
+    return item.status === 'PENDENTE CONTATO';
+  }
 }
 

@@ -5,11 +5,24 @@ import { AlertTriangle, X } from "lucide-react"
 interface AlertModalProps {
   isOpen: boolean
   onClose: () => void
+  onConfirm?: () => void
   title?: string
   message: string
+  confirmText?: string
+  cancelText?: string
+  isConfirmModal?: boolean
 }
 
-export function AlertModal({ isOpen, onClose, title = "Atenção", message }: AlertModalProps) {
+export function AlertModal({ 
+  isOpen, 
+  onClose, 
+  onConfirm,
+  title = "Atenção", 
+  message,
+  confirmText = "CONFIRMAR",
+  cancelText = "CANCELAR",
+  isConfirmModal = false
+}: AlertModalProps) {
   if (!isOpen) return null
 
   return (
@@ -25,15 +38,17 @@ export function AlertModal({ isOpen, onClose, title = "Atenção", message }: Al
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-gray-100 dark:bg-[#4A04A5]/20 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-[#4A04A5]/30 transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-gray dark:bg-[#4A04A5]/20 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-[#4A04A5]/30 transition-colors"
         >
           <X className="w-4 h-4 text-gray-600 dark:text-white" />
         </button>
 
         {/* Icon */}
         <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 rounded-full bg-orange/20 flex items-center justify-center">
-            <AlertTriangle className="w-8 h-8 text-orange" />
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+            isConfirmModal ? 'bg-red/20 dark:bg-re/20' : 'bg-orange/20'
+          }`}>
+            <AlertTriangle className={`w-8 h-8 ${isConfirmModal ? 'text-red' : 'text-orange'}`} />
           </div>
         </div>
 
@@ -47,13 +62,30 @@ export function AlertModal({ isOpen, onClose, title = "Atenção", message }: Al
           {message}
         </p>
 
-        {/* Button */}
-        <button
-          onClick={onClose}
-          className="w-full bg-gradient-to-r from-[#29F3DF] to-[#29F3DF]/80 hover:from-[#29F3DF]/90 hover:to-[#29F3DF]/70 text-[#170138] font-bold py-4 px-6 rounded-xl transition-all text-lg shadow-lg"
-        >
-          ENTENDI
-        </button>
+        {/* Buttons */}
+        {isConfirmModal ? (
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 bg-gray/20 hover:bg-gray/20 text-black font-bold py-4 px-6 rounded-xl transition-all text-lg"
+            >
+              {cancelText}
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 bg-gradient-to-r from-red to-red hover:from-red hover:to-red text-white font-bold py-4 px-6 rounded-xl transition-all text-lg shadow-lg"
+            >
+              {confirmText}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={onClose}
+            className="w-full bg-gradient-to-r from-[#29F3DF] to-[#29F3DF]/80 hover:from-[#29F3DF]/90 hover:to-[#29F3DF]/70 text-[#170138] font-bold py-4 px-6 rounded-xl transition-all text-lg shadow-lg"
+          >
+            ENTENDI
+          </button>
+        )}
       </div>
     </div>
   )

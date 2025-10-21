@@ -5,7 +5,7 @@ import { BackButton } from "@/components/back-button"
 import { BottomNav } from "@/components/bottom-nav"
 import { DesktopSidebar } from "@/components/desktop-sidebar"
 import { PageContainer, PageBackground } from "@/components/page-container"
-import { Search, SlidersHorizontal, Clipboard, LayersIcon, X } from "lucide-react"
+import { Search, SlidersHorizontal, Clipboard, LayersIcon, X, Trash2 } from "lucide-react"
 import { useAuth } from "@/context/Auth"
 import { 
   subscribeToStatusItems, 
@@ -16,12 +16,17 @@ import {
   limitText,
   getStatusColor,
   getStatusBgColor,
-  formatPhoneForDisplay
+  formatPhoneForDisplay,
+  canDeleteItem,
+  deleteIndication,
+  deleteOpportunity,
+  deletePackagedIndication
 } from "@/services/status/status"
 import { formatTimeAgo } from "@/utils/formatTimeAgo"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
+import { AlertModal } from "@/components/alert-modal"
 
 export default function StatusPage() {
   const { userData } = useAuth()
@@ -35,6 +40,9 @@ export default function StatusPage() {
   const [selectedDetail, setSelectedDetail] = useState<UnifiedStatusItem | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<UnifiedStatusItem | null>(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const filterOptions = [
     // Filtros por tipo
@@ -107,6 +115,40 @@ export default function StatusPage() {
     }
   }
 
+  const handleDeleteClick = (item: UnifiedStatusItem, event: React.MouseEvent) => {
+    event.stopPropagation() // Previne que o modal de detalhes abra
+    setItemToDelete(item)
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return
+
+    setIsDeleting(true)
+    try {
+      if (itemToDelete.type === 'indication') {
+        await deleteIndication(itemToDelete.id)
+      } else if (itemToDelete.type === 'opportunity') {
+        await deleteOpportunity(itemToDelete.id)
+      } else if (itemToDelete.type === 'bulk') {
+        await deletePackagedIndication(itemToDelete.id)
+      }
+      
+      setShowDeleteModal(false)
+      setItemToDelete(null)
+    } catch (error) {
+      console.error('Erro ao excluir item:', error)
+      // Aqui você pode adicionar um toast de erro se quiser
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false)
+    setItemToDelete(null)
+  }
+
   // Componente de Dropdown de Filtros
   const FilterDropdown = () => {
     if (!showFilter) return null
@@ -150,7 +192,7 @@ export default function StatusPage() {
 
     return (
       <Dialog open={showBulkModal} onOpenChange={setShowBulkModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md border-0 bg-white dark:bg-[#190d26] ">
           <DialogHeader className="bg-[#4A04A5] -m-6 mb-6 p-6 rounded-t-lg border-b-4 border-[#C352F2]">
             <DialogTitle className="text-white text-xl">Detalhes do Lote</DialogTitle>
           </DialogHeader>
@@ -473,20 +515,28 @@ export default function StatusPage() {
                   return (
                     <div
                       key={item.id}
-                      onClick={() => {
-                        setSelectedBulk(item)
-                        setShowBulkModal(true)
-                      }}
-                      className="bg-white dark:lg:bg-[#190d26] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-tertiary-purple cursor-pointer hover:shadow-md transition-shadow"
+                      className="bg-white dark:lg:bg-[#190d26] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-tertiary-purple hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center">
                         {/* Avatar */}
-                        <div className="w-12 h-12 rounded-full bg-[#820AD1] flex items-center justify-center mr-4">
+                        <div 
+                          className="w-12 h-12 rounded-full bg-[#820AD1] flex items-center justify-center mr-4 cursor-pointer"
+                          onClick={() => {
+                            setSelectedBulk(item)
+                            setShowBulkModal(true)
+                          }}
+                        >
                           <LayersIcon className="w-6 h-6 text-white" />
                         </div>
 
                         {/* Informações */}
-                        <div className="flex-1">
+                        <div 
+                          className="flex-1 cursor-pointer"
+                          onClick={() => {
+                            setSelectedBulk(item)
+                            setShowBulkModal(true)
+                          }}
+                        >
                           <div className="flex items-center justify-between mb-1">
                             <h3 className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white text-base">
                               Lote em massa
@@ -513,6 +563,17 @@ export default function StatusPage() {
                             </Badge>
                           </div>
                         </div>
+
+                        {/* Botão de exclusão */}
+                        {canDeleteItem(item) && (
+                          <button
+                            onClick={(e) => handleDeleteClick(item, e)}
+                            className="ml-2 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
+                            title="Excluir lote"
+                          >
+                            <Trash2 className="w-4 h-4 text-red" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   )
@@ -522,22 +583,30 @@ export default function StatusPage() {
                 return (
                   <div
                     key={item.id}
-                    onClick={() => {
-                      setSelectedDetail(item)
-                      setShowDetailModal(true)
-                    }}
-                    className="bg-white dark:lg:bg-[#190d26] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-tertiary-purple cursor-pointer hover:shadow-md transition-shadow"
+                    className="bg-white dark:lg:bg-[#190d26] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-tertiary-purple hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center">
                       {/* Avatar */}
-                      <div className="w-12 h-12 rounded-full bg-[#4A04A5] flex items-center justify-center mr-4">
+                      <div 
+                        className="w-12 h-12 rounded-full bg-[#4A04A5] flex items-center justify-center mr-4 cursor-pointer"
+                        onClick={() => {
+                          setSelectedDetail(item)
+                          setShowDetailModal(true)
+                        }}
+                      >
                         <span className="text-white font-bold text-sm">
                           {getInitials(item.name)}
                         </span>
                       </div>
 
                       {/* Informações */}
-                      <div className="flex-1">
+                      <div 
+                        className="flex-1 cursor-pointer"
+                        onClick={() => {
+                          setSelectedDetail(item)
+                          setShowDetailModal(true)
+                        }}
+                      >
                         <div className="flex items-center justify-between mb-1">
                           <h3 className="font-bold text-[#4A04A5] lg:text-black lg:dark:text-white text-base">
                             {limitText(item.name)}
@@ -568,8 +637,19 @@ export default function StatusPage() {
                           >
                             {item.type === 'opportunity' ? 'Oportunidade' : 'Indicação'}
                           </Badge>
-              </div>
+                        </div>
                       </div>
+
+                      {/* Botão de exclusão */}
+                      {canDeleteItem(item) && (
+                        <button
+                          onClick={(e) => handleDeleteClick(item, e)}
+                          className="ml-2 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
+                          title="Excluir item"
+                        >
+                          <Trash2 className="w-4 h-4 text-red" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 )
@@ -583,6 +663,22 @@ export default function StatusPage() {
         {/* Modals */}
         <BulkModal />
         <DetailModal />
+        
+        {/* Modal de confirmação de exclusão */}
+        <AlertModal
+          isOpen={showDeleteModal}
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+          title="Confirmar Exclusão"
+          message={
+            itemToDelete?.type === 'bulk'
+              ? `Tem certeza que deseja excluir este lote em massa? Esta ação não pode ser desfeita.`
+              : `Tem certeza que deseja excluir esta ${itemToDelete?.type === 'opportunity' ? 'oportunidade' : 'indicação'}? Esta ação não pode ser desfeita.`
+          }
+          isConfirmModal={true}
+          confirmText="EXCLUIR"
+          cancelText="CANCELAR"
+        />
       </PageContainer>
     </>
   )
