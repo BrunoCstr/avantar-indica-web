@@ -287,13 +287,13 @@ export default function IndicarMultiplosPage() {
                         type="text"
                         placeholder="Nome Completo"
                         className={`w-full border-2 ${
-                          errors.fullName ? "border-red-500" : "border-[#29F3DF]"
+                          errors.fullName ? "border-red" : "border-[#29F3DF]"
                         } text-white placeholder:text-white/60 px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 bg-transparent`}
                       />
                     )}
                   />
                   {errors.fullName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                    <p className="text-red text-sm mt-1">{errors.fullName.message}</p>
                   )}
                 </div>
 
@@ -306,15 +306,15 @@ export default function IndicarMultiplosPage() {
                       <input
                         {...field}
                         type="email"
-                        placeholder="E-mail"
+                        placeholder="E-mail (opcional)"
                         className={`w-full border-2 ${
-                          errors.email ? "border-red-500" : "border-[#29F3DF]"
+                          errors.email ? "border-red" : "border-[#29F3DF]"
                         } text-white placeholder:text-white/60 px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 bg-transparent`}
                       />
                     )}
                   />
                   {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                    <p className="text-red text-sm mt-1">{errors.email.message}</p>
                   )}
                 </div>
 
@@ -330,13 +330,13 @@ export default function IndicarMultiplosPage() {
                         placeholder="Telefone"
                         onChange={(e) => field.onChange(formatPhoneNumber(e.target.value))}
                         className={`w-full border-2 ${
-                          errors.phone ? "border-red-500" : "border-[#29F3DF]"
+                          errors.phone ? "border-red" : "border-[#29F3DF]"
                         } text-white placeholder:text-white/60 px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 bg-transparent`}
                       />
                     )}
                   />
                   {errors.phone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                    <p className="text-red text-sm mt-1">{errors.phone.message}</p>
                   )}
                 </div>
 
@@ -351,7 +351,7 @@ export default function IndicarMultiplosPage() {
                           {...field}
                           disabled={isLoadingProducts}
                           className={`w-full border-2 ${
-                            errors.product ? "border-red-500" : "border-[#29F3DF]"
+                            errors.product ? "border-red" : "border-[#29F3DF]"
                           } text-white px-6 py-4 rounded-2xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 appearance-none bg-transparent ${
                             isLoadingProducts ? "opacity-50 cursor-not-allowed" : ""
                           }`}
@@ -378,7 +378,7 @@ export default function IndicarMultiplosPage() {
                     )}
                   />
                   {errors.product && (
-                    <p className="text-red-500 text-sm mt-1">{errors.product.message}</p>
+                    <p className="text-red text-sm mt-1">{errors.product.message}</p>
                   )}
                 </div>
 
@@ -417,7 +417,7 @@ export default function IndicarMultiplosPage() {
                     <button
                       type="button"
                       onClick={cancelEdit}
-                      className="flex-1 bg-gray-500/30 hover:bg-gray-500/40 text-white font-bold py-4 px-6 rounded-2xl transition-colors border border-gray-500"
+                      className="flex-1 bg-gray/30 hover:bg-gray/40 text-white font-bold py-4 px-6 rounded-2xl transition-colors border border-gray"
                     >
                       CANCELAR
                     </button>
@@ -460,9 +460,9 @@ export default function IndicarMultiplosPage() {
                             setIndexToRemove(index)
                             setShowRemoveModal(true)
                           }}
-                          className="w-9 h-9 rounded-lg bg-red-500/20 hover:bg-red-500/30 flex items-center justify-center transition-colors"
+                          className="w-9 h-9 rounded-lg bg-red/20 hover:bg-red/30 flex items-center justify-center transition-colors"
                         >
-                          <Trash2 className="w-4 h-4 text-red-500" />
+                          <Trash2 className="w-4 h-4 text-red" />
                         </button>
                       </div>
                     </div>
@@ -599,11 +599,11 @@ export default function IndicarMultiplosPage() {
                               type="text"
                               placeholder="Digite o nome completo"
                               className={`w-full border-2 ${
-                                errors.fullName ? "border-red-500" : "border-gray dark:border-[#4A04A5]"
-                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
+                                errors.fullName ? "border-red" : "border-gray dark:border-[#4A04A5]"
+                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
                             />
                             {errors.fullName && (
-                              <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                              <p className="text-red text-sm mt-1">{errors.fullName.message}</p>
                             )}
                           </>
                         )}
@@ -613,7 +613,7 @@ export default function IndicarMultiplosPage() {
                     {/* E-mail */}
                     <div>
                       <label className="block text-sm font-medium text-black dark:text-gray mb-2">
-                        E-mail
+                        E-mail (Opcional)
                       </label>
                       <Controller
                         name="email"
@@ -623,13 +623,13 @@ export default function IndicarMultiplosPage() {
                             <input
                               {...field}
                               type="email"
-                              placeholder="email@exemplo.com"
+                              placeholder="email@exemplo.com (opcional)"
                               className={`w-full border-2 ${
-                                errors.email ? "border-red-500" : "border-gray dark:border-[#4A04A5]"
-                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
+                                errors.email ? "border-red" : "border-gray dark:border-[#4A04A5]"
+                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
                             />
                             {errors.email && (
-                              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                              <p className="text-red text-sm mt-1">{errors.email.message}</p>
                             )}
                           </>
                         )}
@@ -652,11 +652,11 @@ export default function IndicarMultiplosPage() {
                               placeholder="(00) 00000-0000"
                               onChange={(e) => field.onChange(formatPhoneNumber(e.target.value))}
                               className={`w-full border-2 ${
-                                errors.phone ? "border-red-500" : "border-gray dark:border-[#4A04A5]"
-                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
+                                errors.phone ? "border-red" : "border-gray dark:border-[#4A04A5]"
+                              } bg-white dark:bg-[#190d26] text-black dark:text-white placeholder:text-gray dark:placeholder:text-gray px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20`}
                             />
                             {errors.phone && (
-                              <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                              <p className="text-red text-sm mt-1">{errors.phone.message}</p>
                             )}
                           </>
                         )}
@@ -678,7 +678,7 @@ export default function IndicarMultiplosPage() {
                                 {...field}
                                 disabled={isLoadingProducts}
                                 className={`w-full border-2 ${
-                                  errors.product ? "border-red-500" : "border-gray dark:border-[#4A04A5]"
+                                  errors.product ? "border-red" : "border-gray dark:border-[#4A04A5]"
                                 } bg-white dark:bg-[#190d26] text-black dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#29F3DF] focus:ring-2 focus:ring-[#29F3DF]/20 appearance-none ${
                                   isLoadingProducts ? "opacity-50 cursor-not-allowed" : ""
                                 }`}
@@ -693,12 +693,12 @@ export default function IndicarMultiplosPage() {
                                 ))}
                               </select>
                               {isLoadingProducts ? (
-                                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-500 w-5 h-5 animate-spin" />
+                                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-gray w-5 h-5 animate-spin" />
                               ) : (
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-500 w-5 h-5 pointer-events-none" />
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-gray w-5 h-5 pointer-events-none" />
                               )}
                               {errors.product && (
-                                <p className="text-red-500 text-sm mt-1">{errors.product.message}</p>
+                                <p className="text-red text-sm mt-1">{errors.product.message}</p>
                               )}
                             </>
                           )}

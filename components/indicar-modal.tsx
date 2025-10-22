@@ -40,6 +40,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
     resolver: zodResolver(indicationSchema),
     defaultValues: {
       fullName: "",
+      email: "",
       phone: "",
       product: "",
       observations: "",
@@ -188,14 +189,37 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
                     type="text"
                     placeholder="Nome e sobrenome"
                     className={`w-full bg-fifth-purple dark:bg-purple-black border-2 ${
-                      errors.fullName ? "border-red-500" : "border-blue"
+                      errors.fullName ? "border-red" : "border-blue"
                     } text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20`}
                   />
                 )}
               />
               {errors.fullName && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red text-sm mt-1">
                   {errors.fullName.message}
+                </p>
+              )}
+            </div>
+
+            {/* E-mail */}
+            <div>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="email"
+                    placeholder="E-mail (opcional)"
+                    className={`w-full bg-fifth-purple dark:bg-purple-black border-2 ${
+                      errors.email ? "border-red" : "border-blue"
+                    } text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20`}
+                  />
+                )}
+              />
+              {errors.email && (
+                <p className="text-red text-sm mt-1">
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -214,13 +238,13 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
                       field.onChange(formatPhoneNumber(e.target.value))
                     }
                     className={`w-full bg-fifth-purple dark:bg-purple-black border-2 ${
-                      errors.phone ? "border-red-500" : "border-blue"
+                      errors.phone ? "border-red" : "border-blue"
                     } text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20`}
                   />
                 )}
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red text-sm mt-1">
                   {errors.phone.message}
                 </p>
               )}
@@ -278,7 +302,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
                           }
                           disabled={isLoadingProducts}
                           className={`w-full bg-fifth-purple dark:bg-purple-black border-2 ${
-                            errors.product ? "border-red-500" : "border-blue"
+                            errors.product ? "border-red" : "border-blue"
                           } text-white px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 text-left ${
                             isLoadingProducts
                               ? "opacity-50 cursor-not-allowed"
@@ -354,7 +378,7 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
                       </div>
 
                       {errors.product && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red text-sm mt-1">
                           {errors.product.message}
                         </p>
                       )}
@@ -374,13 +398,13 @@ export function IndicarModal({ isOpen, onClose }: IndicarModalProps) {
                     {...field}
                     placeholder="Observações..."
                     className={`w-full bg-fifth-purple dark:bg-purple-black border-2 ${
-                      errors.observations ? "border-red-500" : "border-blue"
+                      errors.observations ? "border-red" : "border-blue"
                     } text-white placeholder:text-blue/70 px-4 py-3 rounded-xl focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 min-h-[100px] resize-none`}
                   />
                 )}
               />
               {errors.observations && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red text-sm mt-1">
                   {errors.observations.message}
                 </p>
               )}

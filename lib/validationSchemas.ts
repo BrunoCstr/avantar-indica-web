@@ -65,6 +65,13 @@ export const indicationSchema = z.object({
     .min(1, 'Nome completo é obrigatório')
     .min(3, 'Nome deve ter pelo menos 3 caracteres')
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
+  email: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (!val || val === '') return true;
+      return z.string().email().safeParse(val).success;
+    }, 'E-mail inválido'),
   phone: z
     .string()
     .min(1, 'Telefone é obrigatório')
@@ -92,8 +99,11 @@ export const multiIndicationSchema = z.object({
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
   email: z
     .string()
-    .min(1, 'E-mail é obrigatório')
-    .email('E-mail inválido'),
+    .optional()
+    .refine((val) => {
+      if (!val || val === '') return true;
+      return z.string().email().safeParse(val).success;
+    }, 'E-mail inválido'),
   phone: z
     .string()
     .min(1, 'Telefone é obrigatório')

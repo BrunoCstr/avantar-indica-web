@@ -71,6 +71,7 @@ export async function submitIndication(
       unitId: userData.affiliated_to,
       unitName: userData.unitName,
       name: data.fullName,
+      email: data.email || "",
       phone: cleanedPhone,
       product: data.product,
       observations: data.observations || "",

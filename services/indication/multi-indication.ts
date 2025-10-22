@@ -78,7 +78,7 @@ export async function submitMultipleIndications(
         unitId: userData.affiliated_to,
         unitName: userData.unitName,
         indicated_name: indication.fullName,
-        indicated_email: indication.email,
+        indicated_email: indication.email || "",
         indicated_phone: cleanedPhone,
         product: indication.product,
         observations: indication.observations || "",
